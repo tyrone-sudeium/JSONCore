@@ -220,7 +220,6 @@ public class JSONParser {
         }
         
         while whitespace.contains(scalar) {
-            try nextScalar()
             if scalar == carriageReturn || scalar == lineFeed {
                 if crlfHack == true && scalar == lineFeed {
                     crlfHack = false
@@ -233,6 +232,7 @@ public class JSONParser {
                     charNumber = 0
                 }
             }
+            try nextScalar()
         }
     }
     
@@ -472,7 +472,7 @@ public class JSONParser {
                 }
                 try nextScalar()
                 switch scalar {
-                case _ where numberScalarSet.contains(scalar):
+                case "0".unicodeScalars.first!..."9".unicodeScalars.first!:
                     positiveExponent = true
                 case plusScalar:
                     positiveExponent = true

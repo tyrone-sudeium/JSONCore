@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import JSONCore
+import JSONCore
 
 class JSONCoreTests: XCTestCase {
     
@@ -28,6 +28,33 @@ class JSONCoreTests: XCTestCase {
         } catch let err {
             if let printableError = err as? CustomStringConvertible {
                 XCTFail("JSON parse error: \(printableError)")
+            }
+        }
+    }
+    
+    func testPerformanceWithTwoHundredMegabyteFile() {
+        measureBlock {
+            let bundle = NSBundle(forClass: self.dynamicType)
+            let path = bundle.pathForResource("1", ofType: "json")
+            let json = try! String(contentsOfFile: path!)
+            do {
+                let value = try JSONParser.parseData(json.unicodeScalars)
+                let coordinates = value.object!["coordinates"]!.array!
+                let len = coordinates.count
+                var x = 0.0; var y = 0.0; var z = 0.0
+                
+                for coord in coordinates {
+                    x = x + (coord.object!["x"]!.double!)
+                    y = y + (coord.object!["y"]!.double!)
+                    z = z + (coord.object!["z"]!.double!)
+                }
+                print("\(x / Double(len))")
+                print("\(y / Double(len))")
+                print("\(z / Double(len))")
+            } catch let err {
+                if let printableError = err as? CustomStringConvertible {
+                    XCTFail("JSON parse error: \(printableError)")
+                }
             }
         }
     }

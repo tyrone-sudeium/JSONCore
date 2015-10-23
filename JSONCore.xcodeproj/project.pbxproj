@@ -11,6 +11,7 @@
 		8B4714BA1BDA647800D29CDC /* JSONCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B4714AF1BDA647800D29CDC /* JSONCore.framework */; };
 		8B4714BF1BDA647800D29CDC /* JSONCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */; };
 		8B4714CA1BDA64C900D29CDC /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714C91BDA64C900D29CDC /* JSONCore.swift */; };
+		8B4714CE1BDA6E4C00D29CDC /* 1.json in Resources */ = {isa = PBXBuildFile; fileRef = 8B4714CD1BDA6E4C00D29CDC /* 1.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +32,8 @@
 		8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoreTests.swift; sourceTree = "<group>"; };
 		8B4714C01BDA647800D29CDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8B4714C91BDA64C900D29CDC /* JSONCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCore.swift; sourceTree = "<group>"; };
+		8B4714CB1BDA6D6900D29CDC /* generate_json.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = generate_json.rb; sourceTree = "<group>"; };
+		8B4714CD1BDA6E4C00D29CDC /* 1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 1.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +86,8 @@
 		8B4714BD1BDA647800D29CDC /* JSONCoreTests */ = {
 			isa = PBXGroup;
 			children = (
+				8B4714CD1BDA6E4C00D29CDC /* 1.json */,
+				8B4714CB1BDA6D6900D29CDC /* generate_json.rb */,
 				8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */,
 				8B4714C01BDA647800D29CDC /* Info.plist */,
 			);
@@ -128,6 +133,7 @@
 				8B4714B51BDA647800D29CDC /* Sources */,
 				8B4714B61BDA647800D29CDC /* Frameworks */,
 				8B4714B71BDA647800D29CDC /* Resources */,
+				8B4714CC1BDA6D7E00D29CDC /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -187,10 +193,27 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B4714CE1BDA6E4C00D29CDC /* 1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8B4714CC1BDA6D7E00D29CDC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ${PROJECT_DIR}/JSONCoreTests\nif [ ! -e \"1.json\" ]; then\n  /usr/bin/env ruby generate_json.rb\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8B4714AA1BDA647800D29CDC /* Sources */ = {
