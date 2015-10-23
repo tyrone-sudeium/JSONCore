@@ -10,6 +10,7 @@
 		8B4714B31BDA647800D29CDC /* JSONCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B4714B21BDA647800D29CDC /* JSONCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B4714BA1BDA647800D29CDC /* JSONCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B4714AF1BDA647800D29CDC /* JSONCore.framework */; };
 		8B4714BF1BDA647800D29CDC /* JSONCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */; };
+		8B4714CA1BDA64C900D29CDC /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714C91BDA64C900D29CDC /* JSONCore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 		8B4714B91BDA647800D29CDC /* JSONCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JSONCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoreTests.swift; sourceTree = "<group>"; };
 		8B4714C01BDA647800D29CDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8B4714C91BDA64C900D29CDC /* JSONCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 			children = (
 				8B4714B21BDA647800D29CDC /* JSONCore.h */,
 				8B4714B41BDA647800D29CDC /* Info.plist */,
+				8B4714C91BDA64C900D29CDC /* JSONCore.swift */,
 			);
 			path = JSONCore;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B4714CA1BDA64C900D29CDC /* JSONCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,28 +312,33 @@
 		8B4714C41BDA647800D29CDC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = JSONCore/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sudeium.JSONCore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		8B4714C51BDA647800D29CDC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = JSONCore/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sudeium.JSONCore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
