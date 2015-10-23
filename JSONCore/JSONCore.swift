@@ -143,8 +143,6 @@ private let decimalScalar = ".".unicodeScalars.first!
 private let quotationMark = UnicodeScalar(0x0022)
 private let carriageReturn = UnicodeScalar(0x000D)
 private let lineFeed = UnicodeScalar(0x000A)
-private let whitespace: Set = [UnicodeScalar(0x0009),
-    UnicodeScalar(0x000A), UnicodeScalar(0x000D), UnicodeScalar(0x0020)]
 
 // String escapes
 private let reverseSolidus = UnicodeScalar(0x005C)
@@ -215,11 +213,12 @@ public class JSONParser {
     }
     
     func skipToNextToken() throws {
-        if !whitespace.contains(scalar) {
+        var v = scalar.value
+        if v != 0x0009 && v != 0x000A && v != 0x000D && v != 0x0020 {
             throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
         }
         
-        while whitespace.contains(scalar) {
+        while v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
             if scalar == carriageReturn || scalar == lineFeed {
                 if crlfHack == true && scalar == lineFeed {
                     crlfHack = false
@@ -233,6 +232,7 @@ public class JSONParser {
                 }
             }
             try nextScalar()
+            v = scalar.value
         }
     }
     
@@ -246,7 +246,8 @@ public class JSONParser {
     }
     
     func nextValue() throws -> JSONValue {
-        if whitespace.contains(scalar) {
+        let v = scalar.value
+        if v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
             try skipToNextToken()
         }
         switch scalar {
@@ -278,12 +279,14 @@ public class JSONParser {
             return JSONValue.JSONObject(dictBuilder)
         }
         outerLoop: repeat {
-            if whitespace.contains(scalar) {
+            var v = scalar.value
+            if v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
                 try skipToNextToken()
             }
             let jsonString = try nextString()
             try nextScalar() // Skip the quotation character
-            if whitespace.contains(scalar) {
+            v = scalar.value
+            if v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
                 try skipToNextToken()
             }
             if scalar != colon {
@@ -298,7 +301,8 @@ public class JSONParser {
             default:
                 try nextScalar()
             }
-            if whitespace.contains(scalar) {
+            v = scalar.value
+            if v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
                 try skipToNextToken()
             }
             let key = jsonString.string! // We're pretty confident it's a string since we called nextString() above
@@ -306,7 +310,7 @@ public class JSONParser {
             switch scalar {
             case rightCurlyBracket:
                 break outerLoop
-            case ",".unicodeScalars.first!:
+            case comma:
                 try nextScalar()
             default:
                 throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
@@ -336,13 +340,14 @@ public class JSONParser {
             default:
                 try nextScalar()
             }
-            if whitespace.contains(scalar) {
+            let v = scalar.value
+            if v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
                 try skipToNextToken()
             }
             switch scalar {
             case rightSquareBracket:
                 break outerLoop
-            case ",".unicodeScalars.first!:
+            case comma:
                 try nextScalar()
             default:
                 throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)

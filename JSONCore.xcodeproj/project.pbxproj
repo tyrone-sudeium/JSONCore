@@ -132,8 +132,8 @@
 			buildPhases = (
 				8B4714B51BDA647800D29CDC /* Sources */,
 				8B4714B61BDA647800D29CDC /* Frameworks */,
-				8B4714B71BDA647800D29CDC /* Resources */,
 				8B4714CC1BDA6D7E00D29CDC /* ShellScript */,
+				8B4714B71BDA647800D29CDC /* Resources */,
 			);
 			buildRules = (
 			);
@@ -347,6 +347,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sudeium.JSONCore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_DISABLE_SAFETY_CHECKS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -366,6 +367,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sudeium.JSONCore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_DISABLE_SAFETY_CHECKS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};
@@ -408,6 +411,7 @@
 				8B4714C51BDA647800D29CDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8B4714C61BDA647800D29CDC /* Build configuration list for PBXNativeTarget "JSONCoreTests" */ = {
 			isa = XCConfigurationList;
@@ -416,6 +420,7 @@
 				8B4714C81BDA647800D29CDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
