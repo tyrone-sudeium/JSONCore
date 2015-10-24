@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8B4714AE1BDA647800D29CDC"
+               BlueprintIdentifier = "8BEEBF4D1BDB101800F702C8"
                BuildableName = "JSONCore.framework"
-               BlueprintName = "JSONCore"
+               BlueprintName = "JSONCore OSX"
                ReferencedContainer = "container:JSONCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -42,9 +42,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8B4714AE1BDA647800D29CDC"
+            BlueprintIdentifier = "8BEEBF4D1BDB101800F702C8"
             BuildableName = "JSONCore.framework"
-            BlueprintName = "JSONCore"
+            BlueprintName = "JSONCore OSX"
             ReferencedContainer = "container:JSONCore.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -64,9 +64,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8B4714AE1BDA647800D29CDC"
+            BlueprintIdentifier = "8BEEBF4D1BDB101800F702C8"
             BuildableName = "JSONCore.framework"
-            BlueprintName = "JSONCore"
+            BlueprintName = "JSONCore OSX"
             ReferencedContainer = "container:JSONCore.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -82,9 +82,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8B4714AE1BDA647800D29CDC"
+            BlueprintIdentifier = "8BEEBF4D1BDB101800F702C8"
             BuildableName = "JSONCore.framework"
-            BlueprintName = "JSONCore"
+            BlueprintName = "JSONCore OSX"
             ReferencedContainer = "container:JSONCore.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -235,6 +235,7 @@ public class JSONParser {
     
     func nextScalars(count: UInt) throws -> [UnicodeScalar] {
         var values = [UnicodeScalar]()
+        values.reserveCapacity(Int(count))
         for _ in 0..<count {
             try nextScalar()
             values.append(scalar)
