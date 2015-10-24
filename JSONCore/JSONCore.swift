@@ -155,9 +155,6 @@ private let trueToken = [UnicodeScalar]("true".unicodeScalars)
 private let falseToken = [UnicodeScalar]("false".unicodeScalars)
 private let nullToken = [UnicodeScalar]("null".unicodeScalars)
 
-private let numberScalarSet = Set([UnicodeScalar]("0123456789-.".unicodeScalars))
-private let exponentSymbolScalarSet = Set([UnicodeScalar]("eE".unicodeScalars))
-
 private let escapeMap = [
     "/".unicodeScalars.first!: solidus,
     "b".unicodeScalars.first!: backspace,
@@ -261,7 +258,7 @@ public class JSONParser {
             return try nextBool()
         case nullToken[0]:
             return try nextNull()
-        case let s where numberScalarSet.contains(s):
+        case "0".unicodeScalars.first!..."9".unicodeScalars.first!,negativeScalar,decimalScalar:
             return try nextNumber()
         default:
             throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
@@ -469,7 +466,7 @@ public class JSONParser {
                     hasDecimal = true
                 }
                 try nextScalar()
-            case _ where exponentSymbolScalarSet.contains(scalar):
+            case "e".unicodeScalars.first!,"E".unicodeScalars.first!:
                 if hasExponent {
                     throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
                 } else {
