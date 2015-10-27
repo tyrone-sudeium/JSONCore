@@ -13,7 +13,7 @@ public typealias JSONObject = [String : JSONValue]
 
 public enum JSONNumberType {
     case JSONIntegral(Int64)
-    case JSONFloat(Double)
+    case JSONFractional(Double)
 }
 
 public enum JSONValue {
@@ -89,7 +89,7 @@ public enum JSONValue {
             switch self {
             case .JSONNumber(let num):
                 switch num {
-                case .JSONFloat(let f):
+                case .JSONFractional(let f):
                     return f
                 default:
                     return nil
@@ -107,7 +107,7 @@ public func ==(lhs: JSONNumberType, rhs: JSONNumberType) -> Bool {
     switch (lhs, rhs) {
     case (let .JSONIntegral(l), let .JSONIntegral(r)):
         return l == r
-    case (let .JSONFloat(l), let .JSONFloat(r)):
+    case (let .JSONFractional(l), let .JSONFractional(r)):
         return l == r
     default:
         return false
@@ -142,6 +142,7 @@ public enum JSONParseError: ErrorType {
     case UnterminatedString
     case InvalidUnicode
     case UnexpectedKeyword(lineNumber: UInt, characterNumber: UInt)
+    case InvalidNumber(lineNumber: UInt, characterNumber: UInt)
     case EndOfFile
 }
 
@@ -162,6 +163,8 @@ extension JSONParseError: CustomStringConvertible {
             return "Unexpected keyword at \(lineNumber):\(characterNumber)"
         case .EndOfFile:
             return "Unexpected end of file"
+        case .InvalidNumber:
+            return "Invalid number"
         }
     }
 }
@@ -510,69 +513,75 @@ public class JSONParser {
         var hasExponent = false
         var positiveExponent = false
         var exponent = 0
-        var integer: Int64 = 0
+        var integer: UInt64 = 0
         var decimal: Int64 = 0
         var divisor: Double = 10
+        let lineNumAtStart = lineNumber
+        let charNumAtStart = charNumber
         
-        outerLoop: repeat {
-            switch scalar {
-            case "0".unicodeScalars.first!..."9".unicodeScalars.first!:
-                hasDigits = true
-                if hasDecimal {
-                    decimal *= 10
-                    decimal += Int64(scalar.value - zeroScalar.value)
-                    divisor *= 10
-                } else {
-                    integer *= 10
-                    integer += Int64(scalar.value - zeroScalar.value)
-                }
-                try nextScalar()
-            case negativeScalar:
-                if hasDigits || hasDecimal || hasDigits || isNegative {
-                    throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
-                } else {
-                    isNegative = true
-                }
-                try nextScalar()
-            case decimalScalar:
-                if hasDecimal {
-                    throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
-                } else {
-                    hasDecimal = true
-                }
-                try nextScalar()
-            case "e".unicodeScalars.first!,"E".unicodeScalars.first!:
-                if hasExponent {
-                    throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
-                } else {
-                    hasExponent = true
-                }
-                try nextScalar()
+        do {
+            outerLoop: repeat {
                 switch scalar {
                 case "0".unicodeScalars.first!..."9".unicodeScalars.first!:
-                    positiveExponent = true
-                case plusScalar:
-                    positiveExponent = true
+                    hasDigits = true
+                    if hasDecimal {
+                        decimal *= 10
+                        decimal += Int64(scalar.value - zeroScalar.value)
+                        divisor *= 10
+                    } else {
+                        integer *= 10
+                        integer += UInt64(scalar.value - zeroScalar.value)
+                    }
                     try nextScalar()
                 case negativeScalar:
-                    positiveExponent = false
-                    try nextScalar()
-                default:
-                    throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
-                }
-                exponentLoop: repeat {
-                    if scalar.value >= zeroScalar.value && scalar.value <= "9".unicodeScalars.first!.value {
-                        exponent *= 10
-                        exponent += Int(scalar.value - zeroScalar.value)
-                        try nextScalar()
+                    if hasDigits || hasDecimal || hasDigits || isNegative {
+                        throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
                     } else {
-                        break exponentLoop
+                        isNegative = true
                     }
-                } while true
-            default:
-                break outerLoop
-            }
-        } while true
+                    try nextScalar()
+                case decimalScalar:
+                    if hasDecimal {
+                        throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
+                    } else {
+                        hasDecimal = true
+                    }
+                    try nextScalar()
+                case "e".unicodeScalars.first!,"E".unicodeScalars.first!:
+                    if hasExponent {
+                        throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
+                    } else {
+                        hasExponent = true
+                    }
+                    try nextScalar()
+                    switch scalar {
+                    case "0".unicodeScalars.first!..."9".unicodeScalars.first!:
+                        positiveExponent = true
+                    case plusScalar:
+                        positiveExponent = true
+                        try nextScalar()
+                    case negativeScalar:
+                        positiveExponent = false
+                        try nextScalar()
+                    default:
+                        throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
+                    }
+                    exponentLoop: repeat {
+                        if scalar.value >= zeroScalar.value && scalar.value <= "9".unicodeScalars.first!.value {
+                            exponent *= 10
+                            exponent += Int(scalar.value - zeroScalar.value)
+                            try nextScalar()
+                        } else {
+                            break exponentLoop
+                        }
+                    } while true
+                default:
+                    break outerLoop
+                }
+            } while true
+        } catch JSONParseError.EndOfFile {
+            // This is fine
+        }
         
         if !hasDigits {
             throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
@@ -593,9 +602,24 @@ public class JSONParser {
                     }
                 }
             }
-            return JSONValue.JSONNumber(JSONNumberType.JSONFloat(number))
+            return JSONValue.JSONNumber(JSONNumberType.JSONFractional(number))
         } else {
-            let number = Int64(sign) * integer
+            var number: Int64
+            if isNegative {
+                if integer > UInt64(Int64.max) + 1 {
+                    throw JSONParseError.InvalidNumber(lineNumber: lineNumAtStart, characterNumber: charNumAtStart)
+                } else if integer == UInt64(Int64.max) + 1 {
+                    number = Int64.min
+                } else {
+                    number = Int64(integer) * -1
+                }
+            } else {
+                if integer > UInt64(Int64.max) {
+                    throw JSONParseError.InvalidNumber(lineNumber: lineNumAtStart, characterNumber: charNumAtStart)
+                } else {
+                    number = Int64(integer)
+                }
+            }
             return JSONValue.JSONNumber(JSONNumberType.JSONIntegral(number))
         }
     }

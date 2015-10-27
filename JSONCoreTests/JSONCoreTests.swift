@@ -78,6 +78,18 @@ class JSONCoreTests: XCTestCase {
         expectError(.UnexpectedKeyword(lineNumber: 0, characterNumber: 1), json: "fals")
     }
     
+    func testParseNumbers() {
+        expectValue(.JSONNumber(.JSONIntegral(0)), json: "0")
+        expectValue(.JSONNumber(.JSONIntegral(9223372036854775807)), json: "9223372036854775807")
+        expectValue(.JSONNumber(.JSONIntegral(-9223372036854775808)), json: "-9223372036854775808")
+        expectValue(.JSONNumber(.JSONFractional(1.0)), json: "10e-1")
+        expectValue(.JSONNumber(.JSONFractional(0.1)), json: "0.1")
+        // Floating point numbers are the actual worst
+        expectValue(.JSONNumber(.JSONFractional(0.000000050000000000000011)), json: "5e-8")
+        expectValue(.JSONNumber(.JSONFractional(0.1)), json: "0.1")
+        expectValue(.JSONNumber(.JSONFractional(0.52)), json: "5.2e-1")
+    }
+    
     func testPerformanceWithTwoHundredMegabyteFile() {
         measureBlock {
             let bundle = NSBundle(forClass: self.dynamicType)
