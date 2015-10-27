@@ -52,10 +52,11 @@ simply returning a Swift `Dictionary` to the caller, I'm probably not going to
 get a huge amount more performance. If `libswiftCore` goes open source it should
 give further insight into the performance characteristics of `Dictionary`, too.
 
-I'm also not completely rid of Objective-C bridging just yet. I can't find any
-way to do disk IO without using Foundation or Darwin, so for the moment the
-source JSON in the performance test is being read in as an `NSString` using
- `contentsOfFile:`, and this comes with a non-negligible performance deficit.
+Be aware that if the string you pass in to `JSONParser.parseData` was bridged
+using an `NSString` constructor, there'll be serious performance ramifications.
+You should be aware of what's constructing your raw JSON data object and how
+it gets initialised. You'll get an almost 2x speed boost by sticking to `String`
+over `NSString`.
 
 ## Usage
 ```Swift
