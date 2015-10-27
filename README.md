@@ -10,10 +10,10 @@ JSON library.
 At WWDC 2015 Apple announced their intention to release an open source version
 of Swift. When this happens it is very likely that what they'll release is the
 code for the `swiftc` compiler as well as the source code for `libswiftCore`,
-which contains the basic Swift types such as `Array` and `Dictionary`. They
-probably won't be releasing Foundation, though. Even though CoreFoundation is
-open source, it's not exactly portable, and it doesn't bridge as seamlessly
-to Swift as the Objective-C Foundation does.
+which contains the basic Swift types such as `Array` and `Dictionary`. At this
+stage no one knows if they'll release a version of Foundation. Even though
+CoreFoundation is open source, it's not exactly portable, and it may not bridge
+as seamlessly to Swift as the Objective-C Foundation does.
 
 JSON transformation is a pretty essential capability for any language or
 platform, and it'll likely be missing from the cross-platform version of Swift
@@ -28,11 +28,11 @@ busywork for the CPU and is just a side effect of the fact that the standard
 JSON engine for Swift today is an Objective-C class, `NSJSONSerialization`,
 which returns Objective-C objects.
 
-JSON Core works only on native Swift types, `Array`, `Dictionary`, `Int64` and
-`Double`, which means there's no bridging required. It's still a long way off
-being as efficient as `NSJSONSerialization` in Objective-C only mode, but it's
-already considerably faster than `NSJSONSerialization` when used with Swift
-code.
+JSON Core works only on native Swift types, `Array`, `Dictionary`, `Int64`,
+`Double`, and `Bool`, which means there's no bridging required. It's still a
+long way off being as efficient as `NSJSONSerialization` in Objective-C only
+mode, but it's already considerably faster than `NSJSONSerialization` when used
+with Swift code.
 
 Here's a chart showing the performance characteristics of JSON Core when parsing
 an extremely large JSON file from disk. The source JSON file is generated when
@@ -54,7 +54,7 @@ give further insight into the performance characteristics of `Dictionary`, too.
 
 I'm also not completely rid of Objective-C bridging just yet. I can't find any
 way to do disk IO without using Foundation or Darwin, so for the moment the
-source JSON in the performance test is being read in as an NSString using
+source JSON in the performance test is being read in as an `NSString` using
  `contentsOfFile:`, and this comes with a non-negligible performance deficit.
 
 ## Usage
@@ -76,4 +76,6 @@ do {
 ## Installation
 I'm not on Carthage or CocoaPods (yet!), however, JSON Core is just a single
 Swift file with zero dependencies, so feel free to make this repo a submodule
-and just drop the `JSONCore.swift` file into your project directly.
+and just drop the `JSONCore.swift` file into your project directly. I will add
+support for Carthage and CocoaPods when I'm happy JSON Core is stable enough for
+production use.
