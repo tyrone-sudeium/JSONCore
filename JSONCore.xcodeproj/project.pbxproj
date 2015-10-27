@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B41AFE51BDF91D900A7553D /* JSONCorePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B41AFE41BDF91D900A7553D /* JSONCorePerformanceTests.swift */; };
 		8B4714B31BDA647800D29CDC /* JSONCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B4714B21BDA647800D29CDC /* JSONCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B4714CA1BDA64C900D29CDC /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714C91BDA64C900D29CDC /* JSONCore.swift */; };
 		8BEEBF371BDB0FB400F702C8 /* JSONCore watchOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BEEBF361BDB0FB400F702C8 /* JSONCore watchOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -31,6 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8B41AFE41BDF91D900A7553D /* JSONCorePerformanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCorePerformanceTests.swift; sourceTree = "<group>"; };
 		8B4714AF1BDA647800D29CDC /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B4714B21BDA647800D29CDC /* JSONCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONCore.h; sourceTree = "<group>"; };
 		8B4714B41BDA647800D29CDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				8B4714CD1BDA6E4C00D29CDC /* 1.json */,
 				8B4714CB1BDA6D6900D29CDC /* generate_json.rb */,
 				8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */,
+				8B41AFE41BDF91D900A7553D /* JSONCorePerformanceTests.swift */,
 				8B4714C01BDA647800D29CDC /* Info.plist */,
 			);
 			path = JSONCoreTests;
@@ -433,6 +436,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8BEEBF681BDB11AD00F702C8 /* JSONCoreTests.swift in Sources */,
+				8B41AFE51BDF91D900A7553D /* JSONCorePerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -767,6 +771,7 @@
 				8BEEBF3B1BDB0FB400F702C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8BEEBF461BDB0FE900F702C8 /* Build configuration list for PBXNativeTarget "JSONCore tvOS" */ = {
 			isa = XCConfigurationList;
@@ -775,6 +780,7 @@
 				8BEEBF481BDB0FE900F702C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8BEEBF531BDB101800F702C8 /* Build configuration list for PBXNativeTarget "JSONCore OSX" */ = {
 			isa = XCConfigurationList;
@@ -783,6 +789,7 @@
 				8BEEBF551BDB101800F702C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8BEEBF651BDB118400F702C8 /* Build configuration list for PBXNativeTarget "JSONCoreTests" */ = {
 			isa = XCConfigurationList;
@@ -791,6 +798,7 @@
 				8BEEBF671BDB118400F702C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
