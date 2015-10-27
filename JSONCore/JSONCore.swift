@@ -505,7 +505,7 @@ public class JSONParser {
         }
         
         let sign = isNegative ? -1 : 1
-        if hasDecimal {
+        if hasDecimal || hasExponent {
             divisor /= 10
             var number = Double(sign) * (Double(integer) + (Double(decimal) / divisor))
             if hasExponent {
@@ -521,18 +521,7 @@ public class JSONParser {
             }
             return JSONValue.JSONNumber(JSONNumberType.JSONFloat(number))
         } else {
-            var number = Int64(sign) * integer
-            if hasExponent {
-                if positiveExponent {
-                    for _ in 1...exponent {
-                        number *= Int64(10)
-                    }
-                } else {
-                    for _ in 1...exponent {
-                        number /= Int64(10)
-                    }
-                }
-            }
+            let number = Int64(sign) * integer
             return JSONValue.JSONNumber(JSONNumberType.JSONIntegral(number))
         }
     }
