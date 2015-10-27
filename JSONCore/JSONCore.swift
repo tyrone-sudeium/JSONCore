@@ -101,7 +101,41 @@ public enum JSONValue {
     }
 }
 
-public enum JSONParseError: ErrorType, CustomStringConvertible {
+extension JSONNumberType : Equatable {}
+
+public func ==(lhs: JSONNumberType, rhs: JSONNumberType) -> Bool {
+    switch (lhs, rhs) {
+    case (let .JSONIntegral(l), let .JSONIntegral(r)):
+        return l == r
+    case (let .JSONFloat(l), let .JSONFloat(r)):
+        return l == r
+    default:
+        return false
+    }
+}
+
+extension JSONValue: Equatable {}
+
+public func ==(lhs: JSONValue, rhs: JSONValue) -> Bool {
+    switch (lhs, rhs) {
+    case (let .JSONNumber(lnum), let .JSONNumber(rnum)):
+        return lnum == rnum
+    case (.JSONNull, .JSONNull):
+        return true
+    case (let .JSONString(l), let .JSONString(r)):
+        return l == r
+    case (let .JSONObject(l), let .JSONObject(r)):
+        return l == r
+    case (let .JSONBool(l), let .JSONBool(r)):
+        return l == r
+    case (let .JSONArray(l), let .JSONArray(r)):
+        return l == r
+    default:
+        return false
+    }
+}
+
+public enum JSONParseError: ErrorType {
     case Unknown
     case EmptyInput
     case UnexpectedCharacter(lineNumber: UInt, characterNumber: UInt)
@@ -109,7 +143,9 @@ public enum JSONParseError: ErrorType, CustomStringConvertible {
     case InvalidUnicode
     case UnexpectedKeyword(lineNumber: UInt, characterNumber: UInt)
     case EndOfFile
-    
+}
+
+extension JSONParseError: CustomStringConvertible {
     public var description: String {
         switch self {
         case .Unknown:
@@ -124,9 +160,32 @@ public enum JSONParseError: ErrorType, CustomStringConvertible {
             return "Invalid unicode"
         case .UnexpectedKeyword(let lineNumber, let characterNumber):
             return "Unexpected keyword at \(lineNumber):\(characterNumber)"
-        default:
-            return "Unknown error"
+        case .EndOfFile:
+            return "Unexpected end of file"
         }
+    }
+}
+
+extension JSONParseError: Equatable {}
+
+public func ==(lhs: JSONParseError, rhs: JSONParseError) -> Bool {
+    switch (lhs, rhs) {
+    case (.Unknown, .Unknown):
+        return true
+    case (.EmptyInput, .EmptyInput):
+        return true
+    case (let .UnexpectedCharacter(ll, lc), let .UnexpectedCharacter(rl, rc)):
+        return ll == rl && lc == rc
+    case (.UnterminatedString, .UnterminatedString):
+        return true
+    case (.InvalidUnicode, .InvalidUnicode):
+        return true
+    case (let .UnexpectedKeyword(ll, lc), let .UnexpectedKeyword(rl, rc)):
+        return ll == rl && lc == rc
+    case (.EndOfFile, .EndOfFile):
+        return true
+    default:
+        return false
     }
 }
 
@@ -191,10 +250,25 @@ public class JSONParser {
     func parse() throws -> JSONValue {
         do {
             try nextScalar()
+            let value = try nextValue()
+            do {
+                try nextScalar()
+                let v = scalar.value
+                if v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
+                    // Skip to EOF or the next token
+                    try skipToNextToken()
+                    // If we get this far some token was found ...
+                    throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
+                } else {
+                    // There's some weird character at the end of the file...
+                    throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
+                }
+            } catch JSONParseError.EndOfFile {
+                return value
+            }
         } catch JSONParseError.EndOfFile {
             throw JSONParseError.EmptyInput
         }
-        return try nextValue()
     }
     
     func nextScalar() throws {
@@ -529,6 +603,8 @@ public class JSONParser {
     func nextBool() throws -> JSONValue {
         var expectedWord: [UnicodeScalar]
         var expectedBool: Bool
+        let lineNumAtStart = lineNumber
+        let charNumAtStart = charNumber
         if scalar == trueToken[0] {
             expectedWord = trueToken
             expectedBool = true
@@ -538,9 +614,13 @@ public class JSONParser {
         } else {
             throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
         }
-        let word = try [scalar] + nextScalars(UInt(expectedWord.count - 1))
-        if word != expectedWord {
-            throw JSONParseError.UnexpectedKeyword(lineNumber: lineNumber, characterNumber: charNumber - UInt(expectedWord.count))
+        do {
+            let word = try [scalar] + nextScalars(UInt(expectedWord.count - 1))
+            if word != expectedWord {
+                throw JSONParseError.UnexpectedKeyword(lineNumber: lineNumAtStart, characterNumber: charNumAtStart)
+            }
+        } catch JSONParseError.EndOfFile {
+            throw JSONParseError.UnexpectedKeyword(lineNumber: lineNumAtStart, characterNumber: charNumAtStart)
         }
         return JSONValue.JSONBool(expectedBool)
     }

@@ -21,6 +21,38 @@ class JSONCoreTests: XCTestCase {
         super.tearDown()
     }
     
+    func expectError(error: JSONParseError, json: String, file: String = __FILE__, line: UInt = __LINE__) {
+        do {
+            try JSONParser.parseData(json.unicodeScalars)
+            XCTFail("Expected error, got success", file: file, line: line)
+        } catch let err {
+            XCTAssertEqual((err as! JSONParseError), error, file: file, line: line)
+        }
+    }
+    
+    func expectErrorString(error: String, json: String, file: String = __FILE__, line: UInt = __LINE__) {
+        do {
+            try JSONParser.parseData(json.unicodeScalars)
+            XCTFail("Expected error, got success", file: file, line: line)
+        } catch let err {
+            if let printableError = err as? CustomStringConvertible {
+                let str = printableError.description
+                XCTAssertEqual(str, error, file: file, line: line)
+            }
+        }
+    }
+    
+    func expectValue(value: JSONValue, json: String, file: String = __FILE__, line: UInt = __LINE__) {
+        do {
+            let parsedValue = try JSONParser.parseData(json.unicodeScalars)
+            XCTAssertEqual(value, parsedValue, file: file, line: line)
+        } catch let err {
+            if let printableError = err as? CustomStringConvertible {
+                XCTFail("JSON parse error: \(printableError)", file: file, line: line)
+            }
+        }
+    }
+    
     func testSanity() {
         let json = "{\"function\":null,\"numbers\":[4,8,15,16,23,42],\"y_index\":2,\"x_index\":12,\"z_index\":5,\"arcs\":[{\"p2\":[22.1,50],\"p1\":[10.5,15.5],\"radius\":5},{\"p2\":[23.1,40],\"p1\":[11.5,15.5],\"radius\":10},{\"p2\":[23.1,30],\"p1\":[12.5,15.5],\"radius\":3},{\"p2\":[24.1,20],\"p1\":[13.5,15.5],\"radius\":2},{\"p2\":[25.1,10],\"p1\":[14.5,15.5],\"radius\":8},{\"p2\":[26.1,0],\"p1\":[15.5,15.5],\"radius\":2}],\"label\":\"my label\"}"
         do {
@@ -30,6 +62,20 @@ class JSONCoreTests: XCTestCase {
                 XCTFail("JSON parse error: \(printableError)")
             }
         }
+    }
+    
+    func testEmptyInput() {
+        expectError(.EmptyInput, json: "")
+        expectError(.EmptyInput, json: "   ")
+    }
+    
+    func testParseBool() {
+        expectValue(.JSONBool(true), json: "true")
+        expectValue(.JSONBool(false), json: "false")
+        expectError(.UnexpectedCharacter(lineNumber: 0, characterNumber: 5), json: "truex")
+        expectError(.UnexpectedCharacter(lineNumber: 0, characterNumber: 6), json: "falsex")
+        expectError(.UnexpectedKeyword(lineNumber: 0, characterNumber: 1), json: "tru")
+        expectError(.UnexpectedKeyword(lineNumber: 0, characterNumber: 1), json: "fals")
     }
     
     func testPerformanceWithTwoHundredMegabyteFile() {
