@@ -9,21 +9,37 @@
 // JSONCore: A totally native Swift JSON engine
 // Does NOT use NSJSONSerialization. In fact, does not require `import Foundation` at all!
 
+// MARK: Public API
+
+/// The specific type of Swift dictionary that represents valid JSON objects
 public typealias JSONObject = [String : JSONValue]
 
+// MARK: - JSON Values
+/// Numbers from JSON Core are wrapped in this enum to express its two possible
+/// storage types.
 public enum JSONNumberType {
+    /// Numbers in JSON that can be represented as whole numbers are stored as an `Int64`.
     case JSONIntegral(Int64)
+    /// Numbers in JSON that have decimals or exponents are stored as `Double`.
     case JSONFractional(Double)
 }
 
+/// Any value that can be expressed in JSON has a representation in `JSONValue`.
 public enum JSONValue {
+    /// Representation of JSON's number type.
     case JSONNumber(JSONNumberType)
+    /// Representation of a `null` from JSON.
     case JSONNull
+    /// Representation of strings from JSON.
     case JSONString(String)
+    /// Representation of a JSON object, which is a Dictionary with `String` keys and `JSONValue` values.
     case JSONObject([String:JSONValue])
+    /// Representation of `true` and `false` from JSON.
     case JSONBool(Bool)
+    /// Representation of a JSON array, which is an array of `JSONValue`s.
     case JSONArray([JSONValue])
     
+    /// Returns this enum's associated String value if it is one, `nil` otherwise.
     public var string: String? {
         get {
             switch self {
@@ -35,6 +51,7 @@ public enum JSONValue {
         }
     }
     
+    /// Returns this enum's associated String value if it is one, `nil` otherwise.
     public var object: [String : JSONValue]? {
         get {
             switch self {
@@ -46,6 +63,7 @@ public enum JSONValue {
         }
     }
     
+    /// Returns this enum's associated Bool value if it is one, `nil` otherwise.
     public var bool: Bool? {
         get {
             switch self {
@@ -57,6 +75,7 @@ public enum JSONValue {
         }
     }
     
+    /// Returns this enum's associated Array value if it is one, `nil` otherwise.
     public var array: [JSONValue]? {
         get {
             switch self {
@@ -68,6 +87,7 @@ public enum JSONValue {
         }
     }
     
+    /// Returns this enum's associated Int64 value if it is one, `nil` otherwise.
     public var int: Int64? {
         get {
             switch self {
@@ -84,6 +104,7 @@ public enum JSONValue {
         }
     }
     
+    /// Returns this enum's associated Double value if it is one, `nil` otherwise.
     public var double: Double? {
         get {
             switch self {
@@ -135,18 +156,32 @@ public func ==(lhs: JSONValue, rhs: JSONValue) -> Bool {
     }
 }
 
+// MARK: - Errors
+
+/// Errors raised while parsing JSON data.
 public enum JSONParseError: ErrorType {
+    /// Some unknown error, usually indicates something not yet implemented.
     case Unknown
+    /// Input data was either empty or contained only whitespace.
     case EmptyInput
+    /// Some character that violates the strict JSON grammar was found.
     case UnexpectedCharacter(lineNumber: UInt, characterNumber: UInt)
+    /// A JSON string was opened but never closed.
     case UnterminatedString
+    /// Any unicode parsing errors will result in this error. Currently unused.
     case InvalidUnicode
+    /// A keyword, like `null`, `true`, or `false` was expected but something else was in the input.
     case UnexpectedKeyword(lineNumber: UInt, characterNumber: UInt)
+    /// Encountered a JSON number that couldn't be losslessly stored in a `Double` or `Int64`.
+    /// Usually the number is too large or too small.
     case InvalidNumber(lineNumber: UInt, characterNumber: UInt)
+    /// End of file reached, not always an actual error.
     case EndOfFile
 }
 
 extension JSONParseError: CustomStringConvertible {
+    /// Returns a `String` version of the error which can be logged.
+    /// Not currently localized.
     public var description: String {
         switch self {
         case .Unknown:
@@ -192,65 +227,47 @@ public func ==(lhs: JSONParseError, rhs: JSONParseError) -> Bool {
     }
 }
 
-private let leftSquareBracket = UnicodeScalar(0x005b)
-private let leftCurlyBracket = UnicodeScalar(0x007b)
-private let rightSquareBracket = UnicodeScalar(0x005d)
-private let rightCurlyBracket = UnicodeScalar(0x007d)
-private let colon = UnicodeScalar(0x003A)
-private let comma = UnicodeScalar(0x002C)
-private let zeroScalar = "0".unicodeScalars.first!
-private let negativeScalar = "-".unicodeScalars.first!
-private let plusScalar = "+".unicodeScalars.first!
-private let decimalScalar = ".".unicodeScalars.first!
-private let quotationMark = UnicodeScalar(0x0022)
-private let carriageReturn = UnicodeScalar(0x000D)
-private let lineFeed = UnicodeScalar(0x000A)
-
-// String escapes
-private let reverseSolidus = UnicodeScalar(0x005C)
-private let solidus = UnicodeScalar(0x002F)
-private let backspace = UnicodeScalar(0x0008)
-private let formFeed = UnicodeScalar(0x000C)
-private let tabCharacter = UnicodeScalar(0x0009)
-
-private let trueToken = [UnicodeScalar]("true".unicodeScalars)
-private let falseToken = [UnicodeScalar]("false".unicodeScalars)
-private let nullToken = [UnicodeScalar]("null".unicodeScalars)
-
-private let escapeMap = [
-    "/".unicodeScalars.first!: solidus,
-    "b".unicodeScalars.first!: backspace,
-    "f".unicodeScalars.first!: formFeed,
-    "n".unicodeScalars.first!: lineFeed,
-    "r".unicodeScalars.first!: carriageReturn,
-    "t".unicodeScalars.first!: tabCharacter
-]
-
-/*! Turns a JSON data stream into a nested graph of JSONValues
-*/
+// MARK:- Parser
 
 // The structure of this parser is inspired by the great (and slightly insane) NextiveJson parser:
 // https://github.com/nextive/NextiveJson
+
+/**
+ Turns a String represented as a collection of Unicode scalars into a nested graph
+ of `JSONValue`s. This is a strict parser implementing [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+ Being strict, it doesn't support common JSON extensions such as comments.
+*/
 public class JSONParser {
-    var generator: String.UnicodeScalarView.Generator
-    let data: String.UnicodeScalarView
-    var scalar: UnicodeScalar!
-    var lineNumber: UInt = 0
-    var charNumber: UInt = 0
-    
-    var crlfHack = false
-    
-    init(data: String.UnicodeScalarView) {
-        generator = data.generate()
-        self.data = data
-    }
-    
+    /**
+     A shortcut for creating a `JSONParser` and having it parse the given data.
+     This is a blocking operation, and will block the calling thread until parsing
+     finishes or throws an error.
+     - Parameter data: The Unicode scalars representing the input JSON data.
+     - Returns: The root `JSONValue` node from the input data.
+     - Throws: A `JSONParseError` if something failed during parsing.
+    */
     public class func parseData(data: String.UnicodeScalarView) throws -> JSONValue {
         let parser = JSONParser(data: data)
         return try parser.parse()
     }
+
+    /**
+     Designated initializer for `JSONParser`, which requires an input Unicode scalar
+     collection.
+     - Parameter data: The Unicode scalars representing the input JSON data.
+     */
+    public init(data: String.UnicodeScalarView) {
+        generator = data.generate()
+        self.data = data
+    }
     
-    func parse() throws -> JSONValue {
+    /**
+     Starts parsing the data. This is a blocking operation, and will block the 
+     calling thread until parsing finishes or throws an error.
+     - Returns: The root `JSONValue` node from the input data.
+     - Throws: A `JSONParseError` if something failed during parsing.
+    */
+    public func parse() throws -> JSONValue {
         do {
             try nextScalar()
             let value = try nextValue()
@@ -274,6 +291,17 @@ public class JSONParser {
         }
     }
     
+    // MARK: - Internals: Properties
+    
+    var generator: String.UnicodeScalarView.Generator
+    let data: String.UnicodeScalarView
+    var scalar: UnicodeScalar!
+    var lineNumber: UInt = 0
+    var charNumber: UInt = 0
+    
+    var crlfHack = false
+    
+    // MARK: - Enumerating the scalar collection
     func nextScalar() throws {
         if let sc = generator.next() {
             scalar = sc
@@ -320,6 +348,7 @@ public class JSONParser {
         return values
     }
     
+    // MARK: - Parse loop
     func nextValue() throws -> JSONValue {
         let v = scalar.value
         if v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
@@ -343,6 +372,7 @@ public class JSONParser {
         }
     }
     
+    // MARK: - Parse a specific, expected type
     func nextObject() throws -> JSONValue {
         if scalar != leftCurlyBracket {
             throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
@@ -657,3 +687,38 @@ public class JSONParser {
         return JSONValue.JSONNull
     }
 }
+
+
+private let leftSquareBracket = UnicodeScalar(0x005b)
+private let leftCurlyBracket = UnicodeScalar(0x007b)
+private let rightSquareBracket = UnicodeScalar(0x005d)
+private let rightCurlyBracket = UnicodeScalar(0x007d)
+private let colon = UnicodeScalar(0x003A)
+private let comma = UnicodeScalar(0x002C)
+private let zeroScalar = "0".unicodeScalars.first!
+private let negativeScalar = "-".unicodeScalars.first!
+private let plusScalar = "+".unicodeScalars.first!
+private let decimalScalar = ".".unicodeScalars.first!
+private let quotationMark = UnicodeScalar(0x0022)
+private let carriageReturn = UnicodeScalar(0x000D)
+private let lineFeed = UnicodeScalar(0x000A)
+
+// String escapes
+private let reverseSolidus = UnicodeScalar(0x005C)
+private let solidus = UnicodeScalar(0x002F)
+private let backspace = UnicodeScalar(0x0008)
+private let formFeed = UnicodeScalar(0x000C)
+private let tabCharacter = UnicodeScalar(0x0009)
+
+private let trueToken = [UnicodeScalar]("true".unicodeScalars)
+private let falseToken = [UnicodeScalar]("false".unicodeScalars)
+private let nullToken = [UnicodeScalar]("null".unicodeScalars)
+
+private let escapeMap = [
+    "/".unicodeScalars.first!: solidus,
+    "b".unicodeScalars.first!: backspace,
+    "f".unicodeScalars.first!: formFeed,
+    "n".unicodeScalars.first!: lineFeed,
+    "r".unicodeScalars.first!: carriageReturn,
+    "t".unicodeScalars.first!: tabCharacter
+]
