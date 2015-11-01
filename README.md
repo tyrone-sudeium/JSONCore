@@ -1,8 +1,8 @@
 # JSON Core
-JSON Core is a JSON parser written using only core Swift. This means it has no
-dependencies on Foundation, UIKit, AppKit or even Darwin. This is a true parser,
-it doesn't use `NSJSONSerialization` at all, nor does it call out to any C
-JSON library.
+JSON Core is a JSON parser and serializer written using only core Swift. This
+means it has no dependencies on Foundation, UIKit, AppKit or even Darwin. This
+is a true parser and serializer, it doesn't use `NSJSONSerialization` at all,
+nor does it call out to any C JSON library.
 
 ## Why?
 
