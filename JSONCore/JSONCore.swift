@@ -345,7 +345,7 @@ public class JSONSerializer {
      make the output easier to read. Has a non-negligible performance cost. Defaults
      to `false`.
      - Returns: The serialized value as a `String`.
-     - Throws: A `JSONSerializeError if something failed during serialization.
+     - Throws: A `JSONSerializeError` if something failed during serialization.
      */
     public class func serializeValue(value: JSONValue, prettyPrint: Bool = false) throws -> String {
         let serializer = JSONSerializer(value: value, prettyPrint: prettyPrint)
@@ -355,7 +355,7 @@ public class JSONSerializer {
     /**
      Serializes the value passed during initialization.
      - Returns: The serialized value as a `String`.
-     - Throws: A `JSONSerializeError if something failed during serialization.
+     - Throws: A `JSONSerializeError` if something failed during serialization.
      */
     public func serialize() throws -> String {
         try serializeValue(rootValue)
