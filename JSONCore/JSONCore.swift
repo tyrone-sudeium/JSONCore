@@ -51,7 +51,7 @@ public enum JSONValue {
         }
     }
     
-    /// Returns this enum's associated String value if it is one, `nil` otherwise.
+    /// Returns this enum's associated Dictionary value if it is one, `nil` otherwise.
     public var object: [String : JSONValue]? {
         get {
             switch self {
@@ -814,6 +814,8 @@ extension JSONSerializer {
         var generator = str.unicodeScalars.generate()
         while let scalar = generator.next() {
             switch scalar.value {
+            case solidus.value:
+                fallthrough
             case 0x0000...0x001F:
                 output.append(reverseSolidus)
                 switch scalar {
