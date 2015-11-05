@@ -102,6 +102,11 @@ class JSONCoreTests: XCTestCase {
         expectValue(.JSONNumber(.JSONFractional(0.52)), json: "5.2e-1")
     }
     
+    func testParseUnicode() {
+        expectValue(.JSONString("и"), json: "\"\\u0438\"")
+        expectValue(.JSONString("𝄞"), json: "\"\\ud834\\udd1e\"")
+    }
+    
     func testSerializeBool() {
         expectString("true", json: JSONValue.JSONBool(true))
         expectString("false", json: JSONValue.JSONBool(false))

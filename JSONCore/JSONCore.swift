@@ -564,10 +564,11 @@ extension JSONParser {
                         strBuilder.append(s)
                         try nextScalar()
                     } else if scalar == "u".unicodeScalars.first! {
-                        let escapedUnicodeScalar = try nextUnicodeEscape()
-                        strBuilder.append(escapedUnicodeScalar)
+                        let escapedUnicodeValue = try nextUnicodeEscape()
+                        strBuilder.append(UnicodeScalar(escapedUnicodeValue))
                         try nextScalar()
                     }
+                    escaping = false
                 } else {
                     // Simple append
                     strBuilder.append(scalar)
@@ -578,30 +579,51 @@ extension JSONParser {
         return JSONValue.JSONString(strBuilder)
     }
     
-    func nextUnicodeEscape() throws -> UnicodeScalar {
+    func nextUnicodeEscape() throws -> UInt32 {
         if scalar != "u".unicodeScalars.first! {
             throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
         }
         var readScalar = UInt32(0)
         for _ in 0...3 {
+            readScalar = readScalar * 16
             try nextScalar()
             if ("0".unicodeScalars.first!..."9".unicodeScalars.first!).contains(scalar) {
                 readScalar = readScalar + UInt32(scalar.value - "0".unicodeScalars.first!.value)
             } else if ("a".unicodeScalars.first!..."f".unicodeScalars.first!).contains(scalar) {
                 let aScalarVal = "a".unicodeScalars.first!.value
-                let hexScalarVal = aScalarVal + 10
-                let hexVal = scalar.value - hexScalarVal
-                readScalar = readScalar + hexVal
+                let hexVal = scalar.value - aScalarVal
+                let hexScalarVal = hexVal + 10
+                readScalar = readScalar + hexScalarVal
             } else if ("A".unicodeScalars.first!..."F".unicodeScalars.first!).contains(scalar) {
                 let aScalarVal = "A".unicodeScalars.first!.value
-                let hexScalarVal = aScalarVal + 10
-                let hexVal = scalar.value - hexScalarVal
-                readScalar = readScalar + hexVal
+                let hexVal = scalar.value - aScalarVal
+                let hexScalarVal = hexVal + 10
+                readScalar = readScalar + hexScalarVal
             } else {
                 throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
             }
         }
-        return UnicodeScalar(readScalar)
+        if readScalar >= 0xD800 && readScalar <= 0xDBFF {
+            // UTF-16 surrogate pair
+            // The next character MUST be the other half of the surrogate pair
+            // Otherwise it's a unicode error
+            do {
+                try nextScalar()
+                if scalar != reverseSolidus {
+                    throw JSONParseError.InvalidUnicode
+                }
+                try nextScalar()
+                let secondScalar = try nextUnicodeEscape()
+                if secondScalar < 0xDC00 || secondScalar > 0xDFFF {
+                    throw JSONParseError.InvalidUnicode
+                }
+                let actualScalar = (readScalar - 0xD800) * 0x400 + (secondScalar - 0xDC00) + 0x10000
+                return actualScalar
+            } catch JSONParseError.UnexpectedCharacter {
+                throw JSONParseError.InvalidUnicode
+            }
+        }
+        return readScalar
     }
     
     func nextNumber() throws -> JSONValue {
