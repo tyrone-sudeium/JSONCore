@@ -6,20 +6,6 @@ nor does it call out to any C JSON library.
 
 ## Why?
 
-### Portability
-At WWDC 2015 Apple announced their intention to release an open source version
-of Swift. When this happens it is very likely that what they'll release is the
-code for the `swiftc` compiler as well as the source code for `libswiftCore`,
-which contains the basic Swift types such as `Array` and `Dictionary`. At this
-stage no one knows if they'll release a version of Foundation. Even though
-CoreFoundation is open source, it's not exactly portable, and it may not bridge
-as seamlessly to Swift as the Objective-C Foundation does.
-
-JSON transformation is a pretty essential capability for any language or
-platform, and it'll likely be missing from the cross-platform version of Swift
-at launch. With any luck at launch JSON Core will work with only minor
-modifications on the open source Swift compiler.
-
 ### Performance
 The Swift - Objective-C bridge is very efficient for the most part. However,
 when dealing with potentially millions of object allocations, passing them back
@@ -49,8 +35,7 @@ Foundation / CoreFoundation it's possible to very quickly create an
 `NSDictionary` using a C array of values and keys. Unless I write my own data
 structure to represent JSON objects, which means giving up the advantages of
 simply returning a Swift `Dictionary` to the caller, I'm probably not going to
-get a huge amount more performance. If `libswiftCore` goes open source it should
-give further insight into the performance characteristics of `Dictionary`, too.
+get a huge amount more performance.
 
 Be aware that if the string you pass in to `JSONParser.parseData` was bridged
 using an `NSString` constructor, there'll be serious performance ramifications.
