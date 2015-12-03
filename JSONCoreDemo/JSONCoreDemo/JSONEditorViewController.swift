@@ -13,16 +13,6 @@ class JSONEditorViewController: UIViewController, UITextViewDelegate {
     var string: String?
     @IBOutlet var textView: UITextView!
     
-    override func viewDidLoad() {
-        let people = [
-            Person(firstName: "John", surname: "Citizen", nicknames: ["Q"], age: 31),
-            Person(firstName: "Jane", surname: "Citizen", nicknames: [], age: 31),
-            Person(firstName: "Groot", surname: "Groot", nicknames: ["Groot"], age: 0),
-        ]
-        let peopleValue = JSONValue.JSONArray(people.map { try! $0.jsonValue() })
-        string = try! JSONSerializer.serializeValue(peopleValue, prettyPrint: true)
-    }
-    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         registerForKeyboardNotifications()

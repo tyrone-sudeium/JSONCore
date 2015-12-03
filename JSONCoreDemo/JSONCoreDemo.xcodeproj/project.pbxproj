@@ -16,6 +16,7 @@
 		8B2999F51C103DD0003D6E8A /* DemoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2999F41C103DD0003D6E8A /* DemoTableViewController.swift */; };
 		8B2999F71C1040AB003D6E8A /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2999F61C1040AB003D6E8A /* Person.swift */; };
 		8B2999F91C104104003D6E8A /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2999F81C104104003D6E8A /* JSONConvertible.swift */; };
+		8B2999FB1C104AB9003D6E8A /* PeopleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2999FA1C104AB9003D6E8A /* PeopleTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		8B2999F41C103DD0003D6E8A /* DemoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoTableViewController.swift; sourceTree = "<group>"; };
 		8B2999F61C1040AB003D6E8A /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		8B2999F81C104104003D6E8A /* JSONConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
+		8B2999FA1C104AB9003D6E8A /* PeopleTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeopleTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				8B2999CD1C0F228B003D6E8A /* AppDelegate.swift */,
 				8B2999CF1C0F228B003D6E8A /* JSONEditorViewController.swift */,
 				8B2999F41C103DD0003D6E8A /* DemoTableViewController.swift */,
+				8B2999FA1C104AB9003D6E8A /* PeopleTableViewController.swift */,
 				8B2999F61C1040AB003D6E8A /* Person.swift */,
 				8B2999F81C104104003D6E8A /* JSONConvertible.swift */,
 				8B2999D11C0F228B003D6E8A /* Main.storyboard */,
@@ -154,6 +157,7 @@
 				8B2999CE1C0F228B003D6E8A /* AppDelegate.swift in Sources */,
 				8B2999F71C1040AB003D6E8A /* Person.swift in Sources */,
 				8B2999F51C103DD0003D6E8A /* DemoTableViewController.swift in Sources */,
+				8B2999FB1C104AB9003D6E8A /* PeopleTableViewController.swift in Sources */,
 				8B2999F91C104104003D6E8A /* JSONConvertible.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

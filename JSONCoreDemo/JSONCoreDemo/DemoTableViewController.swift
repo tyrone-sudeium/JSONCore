@@ -7,14 +7,20 @@
 //
 
 import UIKit
+import JSONCore
 
 class DemoTableViewController: UITableViewController {
     var currentEditor: JSONEditorViewController?
     var jsonString: String?
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        
+        let people = [
+            Person(firstName: "John", surname: "Citizen", nicknames: ["Q"], age: 31),
+            Person(firstName: "Jane", surname: "Citizen", nicknames: [], age: 31),
+            Person(firstName: "Groot", surname: "Groot", nicknames: ["Groot"], age: 0),
+        ]
+        let peopleValue = JSONValue.JSONArray(people.map { try! $0.jsonValue() })
+        jsonString = try! JSONSerializer.serializeValue(peopleValue, prettyPrint: true)
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -26,9 +32,17 @@ class DemoTableViewController: UITableViewController {
     
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        currentEditor = sender?.destinationViewController as? JSONEditorViewController
-        if let editor = currentEditor {
-            editor.string = jsonString
+        switch segue.identifier {
+        case .Some("EditorSegue"):
+            currentEditor = segue.destinationViewController as? JSONEditorViewController
+            if let editor = currentEditor {
+                editor.string = jsonString
+            }
+        case .Some("ParseSegue"):
+            guard let peopleVC = segue.destinationViewController as? PeopleTableViewController else { return }
+            peopleVC.jsonString = jsonString
+        default:
+            break
         }
     }
 }
