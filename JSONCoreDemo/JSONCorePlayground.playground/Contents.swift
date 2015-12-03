@@ -2,8 +2,11 @@
 # JSONCorePlayground
 A playground that imports JSONCore.
 
-Note:
-You must run this playground inside the JSONCoreDemo workspace, or the import will fail.
+Some notes on getting this to work:
+- You must run this playground inside the JSONCoreDemo workspace, or the import will fail.
+- You must have a 64-bit iOS Simulator selected as your build target.
+- You must have compiled at least once before.
+- Try pressing the playground play button at the bottom to force a recompile.
 */
 
 import JSONCore

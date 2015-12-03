@@ -27,7 +27,7 @@
 		8B2999D41C0F228B003D6E8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8B2999D71C0F228B003D6E8A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8B2999D91C0F228B003D6E8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8B2999F11C0F2340003D6E8A /* JSONCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JSONCore.framework; path = "../build/Debug-iphoneos/JSONCore.framework"; sourceTree = "<group>"; };
+		8B2999F11C0F2340003D6E8A /* JSONCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JSONCore.framework; path = "../Debug-iphonesimulator/JSONCore.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B2999F31C0F2370003D6E8A /* JSONCorePlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = JSONCorePlayground.playground; sourceTree = "<group>"; };
 		8B2999F41C103DD0003D6E8A /* DemoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoTableViewController.swift; sourceTree = "<group>"; };
 		8B2999F61C1040AB003D6E8A /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
