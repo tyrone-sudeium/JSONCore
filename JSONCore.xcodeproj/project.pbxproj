@@ -8,11 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8B41AFE51BDF91D900A7553D /* JSONCorePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B41AFE41BDF91D900A7553D /* JSONCorePerformanceTests.swift */; };
-		8B4714B31BDA647800D29CDC /* JSONCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B4714B21BDA647800D29CDC /* JSONCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B4714CA1BDA64C900D29CDC /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714C91BDA64C900D29CDC /* JSONCore.swift */; };
-		8BEEBF371BDB0FB400F702C8 /* JSONCore watchOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BEEBF361BDB0FB400F702C8 /* JSONCore watchOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8BEEBF441BDB0FE900F702C8 /* JSONCore tvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BEEBF431BDB0FE900F702C8 /* JSONCore tvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8BEEBF511BDB101800F702C8 /* JSONCore OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BEEBF501BDB101800F702C8 /* JSONCore OSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BEEBF561BDB106600F702C8 /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714C91BDA64C900D29CDC /* JSONCore.swift */; };
 		8BEEBF571BDB106600F702C8 /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714C91BDA64C900D29CDC /* JSONCore.swift */; };
 		8BEEBF581BDB106700F702C8 /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714C91BDA64C900D29CDC /* JSONCore.swift */; };
@@ -34,7 +30,6 @@
 /* Begin PBXFileReference section */
 		8B41AFE41BDF91D900A7553D /* JSONCorePerformanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCorePerformanceTests.swift; sourceTree = "<group>"; };
 		8B4714AF1BDA647800D29CDC /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8B4714B21BDA647800D29CDC /* JSONCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONCore.h; sourceTree = "<group>"; };
 		8B4714B41BDA647800D29CDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoreTests.swift; sourceTree = "<group>"; };
 		8B4714C01BDA647800D29CDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -42,13 +37,10 @@
 		8B4714CB1BDA6D6900D29CDC /* generate_json.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = generate_json.rb; sourceTree = "<group>"; };
 		8B4714CD1BDA6E4C00D29CDC /* 1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 1.json; sourceTree = "<group>"; };
 		8BEEBF341BDB0FB400F702C8 /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8BEEBF361BDB0FB400F702C8 /* JSONCore watchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JSONCore watchOS.h"; sourceTree = "<group>"; };
 		8BEEBF381BDB0FB400F702C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BEEBF411BDB0FE900F702C8 /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8BEEBF431BDB0FE900F702C8 /* JSONCore tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JSONCore tvOS.h"; sourceTree = "<group>"; };
 		8BEEBF451BDB0FE900F702C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BEEBF4E1BDB101800F702C8 /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8BEEBF501BDB101800F702C8 /* JSONCore OSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JSONCore OSX.h"; sourceTree = "<group>"; };
 		8BEEBF521BDB101800F702C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BEEBF5D1BDB118400F702C8 /* JSONCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JSONCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -120,7 +112,6 @@
 		8B4714B11BDA647800D29CDC /* JSONCore */ = {
 			isa = PBXGroup;
 			children = (
-				8B4714B21BDA647800D29CDC /* JSONCore.h */,
 				8B4714B41BDA647800D29CDC /* Info.plist */,
 				8B4714C91BDA64C900D29CDC /* JSONCore.swift */,
 			);
@@ -142,7 +133,6 @@
 		8BEEBF351BDB0FB400F702C8 /* JSONCore watchOS */ = {
 			isa = PBXGroup;
 			children = (
-				8BEEBF361BDB0FB400F702C8 /* JSONCore watchOS.h */,
 				8BEEBF381BDB0FB400F702C8 /* Info.plist */,
 			);
 			path = "JSONCore watchOS";
@@ -151,7 +141,6 @@
 		8BEEBF421BDB0FE900F702C8 /* JSONCore tvOS */ = {
 			isa = PBXGroup;
 			children = (
-				8BEEBF431BDB0FE900F702C8 /* JSONCore tvOS.h */,
 				8BEEBF451BDB0FE900F702C8 /* Info.plist */,
 			);
 			path = "JSONCore tvOS";
@@ -160,7 +149,6 @@
 		8BEEBF4F1BDB101800F702C8 /* JSONCore OSX */ = {
 			isa = PBXGroup;
 			children = (
-				8BEEBF501BDB101800F702C8 /* JSONCore OSX.h */,
 				8BEEBF521BDB101800F702C8 /* Info.plist */,
 			);
 			path = "JSONCore OSX";
@@ -173,7 +161,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B4714B31BDA647800D29CDC /* JSONCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,7 +168,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BEEBF371BDB0FB400F702C8 /* JSONCore watchOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,7 +175,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BEEBF441BDB0FE900F702C8 /* JSONCore tvOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,7 +182,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BEEBF511BDB101800F702C8 /* JSONCore OSX.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
