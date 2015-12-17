@@ -161,4 +161,25 @@ class JSONCoreTests: XCTestCase {
         let returnedObj = try! JSONParser.parseData(str.unicodeScalars)
         XCTAssertEqual(returnedObj, obj)
     }
+    
+    func testPrettyPrintNestedArray() {
+        let arr: JSONValue = [
+            [1, 2, 3],
+            [4, 5, 6]
+        ]
+        let expected = "[\n  [\n    1,\n    2,\n    3\n  ],\n  [\n    4,\n    5,\n    6\n  ]\n]"
+        let str = try! JSONSerializer.serializeValue(arr, prettyPrint: true)
+        XCTAssertEqual(str, expected)
+    }
+    
+    func testPrettyPrintNestedObjects() {
+        let obj: JSONValue = [
+            "test": [
+                "1": 2
+            ]
+        ]
+        let expected = "{\n  \"test\": {\n    \"1\": 2\n  }\n}"
+        let str = try! JSONSerializer.serializeValue(obj, prettyPrint: true)
+        XCTAssertEqual(str, expected)
+    }
 }
