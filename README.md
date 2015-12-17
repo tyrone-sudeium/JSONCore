@@ -69,7 +69,7 @@ your `Package.swift` file.
 import PackageDescription
 
 let package = Package(
-    name: "HellowWorld",
+    name: "HelloWorld",
     dependencies: [
         .Package(url: "https://github.com/tyrone-sudeium/JSONCore.git", majorVersion: 0))
     ]

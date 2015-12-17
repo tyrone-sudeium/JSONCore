@@ -120,6 +120,48 @@ public enum JSONValue {
             }
         }
     }
+    
+    /// Treat this JSONValue as a JSONObject and attempt to get or set its
+    /// associated Dictionary values.
+    public subscript(key: String) -> JSONValue? {
+        get {
+            if let object = self.object {
+                return object[key]
+            } else {
+                return nil
+            }
+        }
+        
+        set {
+            if let object = self.object {
+                var newObject = object
+                newObject[key] = newValue
+                self = JSONValue.JSONObject(newObject)
+            }
+        }
+    }
+    
+    /// Treat this JSONValue as a JSONArray and attempt to get or set its
+    /// associated Array values.
+    public subscript(index: Int) -> JSONValue? {
+        get {
+            if let array = self.array {
+                // TODO: Should I just let this crash, like Array does?
+                if index >= 0 && index < array.count {
+                    return array[index]
+                }
+            }
+            return nil
+        }
+        
+        set {
+            if let array = self.array, value = newValue {
+                var newArray = array
+                newArray[index] = value
+                self = JSONValue.JSONArray(newArray)
+            }
+        }
+    }
 }
 
 extension JSONNumberType : Equatable {}
@@ -153,6 +195,63 @@ public func ==(lhs: JSONValue, rhs: JSONValue) -> Bool {
         return l == r
     default:
         return false
+    }
+}
+
+extension JSONValue: IntegerLiteralConvertible {
+    public init(integerLiteral value: IntegerLiteralType) {
+        let val = Int64(value)
+        self = JSONValue.JSONNumber(.JSONIntegral(val))
+    }
+}
+
+extension JSONValue: FloatLiteralConvertible {
+    public init(floatLiteral value: FloatLiteralType) {
+        let val = Double(value)
+        self = JSONValue.JSONNumber(.JSONFractional(val))
+    }
+}
+
+extension JSONValue : StringLiteralConvertible {
+    public init(stringLiteral value: String) {
+        self = JSONValue.JSONString(value)
+    }
+    
+    public init(extendedGraphemeClusterLiteral value: String) {
+        self = JSONValue.JSONString(value)
+    }
+    
+    public init(unicodeScalarLiteral value: String) {
+        self = JSONValue.JSONString(value)
+    }
+}
+
+extension JSONValue : ArrayLiteralConvertible {
+    public init(arrayLiteral elements: JSONValue...) {
+        self = JSONValue.JSONArray(elements)
+    }
+}
+
+extension JSONValue : DictionaryLiteralConvertible {
+    public init(dictionaryLiteral elements: (String, JSONValue)...) {
+        var dict = [String : JSONValue]()
+        for (k, v) in elements {
+            dict[k] = v
+        }
+        
+        self = JSONValue.JSONObject(dict)
+    }
+}
+
+extension JSONValue : NilLiteralConvertible {
+    public init(nilLiteral: ()) {
+        self = JSONValue.JSONNull
+    }
+}
+
+extension JSONValue: BooleanLiteralConvertible {
+    public init(booleanLiteral value: Bool) {
+        self = JSONValue.JSONBool(value)
     }
 }
 
@@ -322,8 +421,19 @@ strictly conforms to [ECMA-404](http://www.ecma-international.org/publications/f
 // JSON serializer that produces decent output before so I should really reuse its
 // logic.
 public class JSONSerializer {
+    
+    /// What line endings should the pretty printer use
+    public enum LineEndings: String {
+        /// Unix (i.e Linux, Darwin) line endings: line feed
+        case Unix = "\n"
+        /// Windows line endings: carriage return + line feed
+        case Windows = "\r\n"
+    }
     /// Whether this serializer will pretty print output or not.
     public let prettyPrint: Bool
+    
+    /// What line endings should the pretty printer use
+    public let lineEndings: LineEndings
     
     /**
      Designated initializer for `JSONSerializer`, which requires an input `JSONValue`.
@@ -332,9 +442,10 @@ public class JSONSerializer {
      make the output easier to read. Has a non-negligible performance cost. Defaults
      to `false`.
      */
-    public init(value: JSONValue, prettyPrint: Bool = false) {
+    public init(value: JSONValue, prettyPrint: Bool = false, lineEndings: LineEndings = .Unix) {
         self.prettyPrint = prettyPrint
         self.rootValue = value
+        self.lineEndings = lineEndings
     }
     
     /**
@@ -781,7 +892,7 @@ extension JSONParser {
 // MARK: JSONSerializer Internals
 extension JSONSerializer {
     
-    func serializeValue(value: JSONValue) throws {
+    func serializeValue(value: JSONValue, indentLevel: Int = 0) throws {
         switch value {
         case .JSONNumber(let nt):
             switch nt {
@@ -795,39 +906,51 @@ extension JSONSerializer {
         case .JSONString(let s):
             serializeString(s)
         case .JSONObject(let obj):
-            try serializeObject(obj)
+            try serializeObject(obj, indentLevel: indentLevel)
         case .JSONBool(let b):
             serializeBool(b)
         case .JSONArray(let a):
-            try serializeArray(a)
+            try serializeArray(a, indentLevel: indentLevel)
         }
     }
     
-    func serializeObject(obj: [String : JSONValue]) throws {
+    func serializeObject(obj: [String : JSONValue], indentLevel: Int = 0) throws {
         output.append(leftCurlyBracket)
+        serializeNewline()
         var i = 0
         for (key, value) in obj {
+            serializeSpaces(indentLevel + 1)
             serializeString(key)
             output.append(colon)
-            try serializeValue(value)
+            if prettyPrint {
+                output.appendContentsOf(" ")
+            }
+            try serializeValue(value, indentLevel: indentLevel + 1)
             i++
             if i != obj.count {
                 output.append(comma)
+                
             }
+            serializeNewline()
         }
+        serializeSpaces(indentLevel)
         output.append(rightCurlyBracket)
     }
     
-    func serializeArray(arr: [JSONValue]) throws {
+    func serializeArray(arr: [JSONValue], indentLevel: Int = 0) throws {
         output.append(leftSquareBracket)
+        serializeNewline()
         var i = 0
         for val in arr {
-            try serializeValue(val)
+            serializeSpaces(indentLevel + 1)
+            try serializeValue(val, indentLevel: indentLevel + 1)
             i++
             if i != arr.count {
                 output.append(comma)
             }
+            serializeNewline()
         }
+        serializeSpaces(indentLevel)
         output.append(rightSquareBracket)
     }
     
@@ -855,10 +978,10 @@ extension JSONSerializer {
                     output.append(solidus)
                 default:
                     output.appendContentsOf("u")
-                    output.append(hexScalars[Int(scalar.value) & 0xF000 >> 12])
-                    output.append(hexScalars[Int(scalar.value) & 0x0F00 >> 8])
-                    output.append(hexScalars[Int(scalar.value) & 0x00F0 >> 4])
-                    output.append(hexScalars[Int(scalar.value) & 0x000F >> 0])
+                    output.append(hexScalars[(Int(scalar.value) & 0xF000) >> 12])
+                    output.append(hexScalars[(Int(scalar.value) & 0x0F00) >> 8])
+                    output.append(hexScalars[(Int(scalar.value) & 0x00F0) >> 4])
+                    output.append(hexScalars[(Int(scalar.value) & 0x000F) >> 0])
                 }
             default:
                 output.append(scalar)
@@ -893,6 +1016,22 @@ extension JSONSerializer {
     
     func serializeNull() {
         output.appendContentsOf("null")
+    }
+    
+    @inline(__always)
+    private final func serializeNewline() {
+        if prettyPrint {
+            output.appendContentsOf(lineEndings.rawValue)
+        }
+    }
+    
+    @inline(__always)
+    private final func serializeSpaces(indentLevel: Int = 0) {
+        if prettyPrint {
+            for _ in 0..<indentLevel {
+                output.appendContentsOf("  ")
+            }
+        }
     }
 }
 
