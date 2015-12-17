@@ -120,6 +120,48 @@ public enum JSONValue {
             }
         }
     }
+    
+    /// Treat this JSONValue as a JSONObject and attempt to get or set its
+    /// associated Dictionary values.
+    public subscript(key: String) -> JSONValue? {
+        get {
+            if let object = self.object {
+                return object[key]
+            } else {
+                return nil
+            }
+        }
+        
+        set {
+            if let object = self.object {
+                var newObject = object
+                newObject[key] = newValue
+                self = JSONValue.JSONObject(newObject)
+            }
+        }
+    }
+    
+    /// Treat this JSONValue as a JSONArray and attempt to get or set its
+    /// associated Array values.
+    public subscript(index: Int) -> JSONValue? {
+        get {
+            if let array = self.array {
+                // TODO: Should I just let this crash, like Array does?
+                if index >= 0 && index < array.count {
+                    return array[index]
+                }
+            }
+            return nil
+        }
+        
+        set {
+            if let array = self.array, value = newValue {
+                var newArray = array
+                newArray[index] = value
+                self = JSONValue.JSONArray(newArray)
+            }
+        }
+    }
 }
 
 extension JSONNumberType : Equatable {}
@@ -153,6 +195,63 @@ public func ==(lhs: JSONValue, rhs: JSONValue) -> Bool {
         return l == r
     default:
         return false
+    }
+}
+
+extension JSONValue: IntegerLiteralConvertible {
+    public init(integerLiteral value: IntegerLiteralType) {
+        let val = Int64(value)
+        self = JSONValue.JSONNumber(.JSONIntegral(val))
+    }
+}
+
+extension JSONValue: FloatLiteralConvertible {
+    public init(floatLiteral value: FloatLiteralType) {
+        let val = Double(value)
+        self = JSONValue.JSONNumber(.JSONFractional(val))
+    }
+}
+
+extension JSONValue : StringLiteralConvertible {
+    public init(stringLiteral value: String) {
+        self = JSONValue.JSONString(value)
+    }
+    
+    public init(extendedGraphemeClusterLiteral value: String) {
+        self = JSONValue.JSONString(value)
+    }
+    
+    public init(unicodeScalarLiteral value: String) {
+        self = JSONValue.JSONString(value)
+    }
+}
+
+extension JSONValue : ArrayLiteralConvertible {
+    public init(arrayLiteral elements: JSONValue...) {
+        self = JSONValue.JSONArray(elements)
+    }
+}
+
+extension JSONValue : DictionaryLiteralConvertible {
+    public init(dictionaryLiteral elements: (String, JSONValue)...) {
+        var dict = [String : JSONValue]()
+        for (k, v) in elements {
+            dict[k] = v
+        }
+        
+        self = JSONValue.JSONObject(dict)
+    }
+}
+
+extension JSONValue : NilLiteralConvertible {
+    public init(nilLiteral: ()) {
+        self = JSONValue.JSONNull
+    }
+}
+
+extension JSONValue: BooleanLiteralConvertible {
+    public init(booleanLiteral value: Bool) {
+        self = JSONValue.JSONBool(value)
     }
 }
 

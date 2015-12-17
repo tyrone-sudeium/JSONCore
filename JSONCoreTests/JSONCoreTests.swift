@@ -140,28 +140,23 @@ class JSONCoreTests: XCTestCase {
     }
     
     func testSerializeArray() {
-        let arr = JSONValue.JSONArray([
-            JSONValue.JSONNumber(JSONNumberType.JSONIntegral(1)),
-            JSONValue.JSONNumber(JSONNumberType.JSONFractional(2.1)),
-            JSONValue.JSONBool(true),
-            JSONValue.JSONBool(false),
-            JSONValue.JSONString("x"),
-            JSONValue.JSONNull
-        ])
-        let nestedArr = JSONValue.JSONArray([arr])
+        let arr: JSONValue = [
+            1, 2.1, true, false, "x", nil
+        ]
+        let nestedArr: JSONValue = [arr]
         expectString("[1,2.1,true,false,\"x\",null]", json: arr)
         expectString("[[1,2.1,true,false,\"x\",null]]", json: nestedArr)
     }
     
     func testSerializeObject() {
-        let obj = JSONValue.JSONObject([
-            "integral": JSONValue.JSONNumber(JSONNumberType.JSONIntegral(1)),
-            "fractional": JSONValue.JSONNumber(JSONNumberType.JSONFractional(2.1)),
-            "true": JSONValue.JSONBool(true),
-            "false": JSONValue.JSONBool(false),
-            "str": JSONValue.JSONString("x"),
-            "null": JSONValue.JSONNull
-        ])
+        let obj: JSONValue = [
+            "integral": 1,
+            "fractional": 2.1,
+            "true": true,
+            "false": false,
+            "str": "x",
+            "null": nil
+        ]
         let str = try! JSONSerializer.serializeValue(obj, prettyPrint: false)
         let returnedObj = try! JSONParser.parseData(str.unicodeScalars)
         XCTAssertEqual(returnedObj, obj)
