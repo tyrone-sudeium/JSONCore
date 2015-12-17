@@ -139,6 +139,13 @@ class JSONCoreTests: XCTestCase {
         expectString("\"\\b\"", json: JSONValue.JSONString(backspaceStr))
     }
     
+    func testSerializeUnicodeEscapes() {
+        expectString("\"\\u001f\"", json: "\u{001F}" as JSONValue)
+        expectString("\"\\u0000\"", json: "\u{0000}" as JSONValue)
+        expectString("\"\\u001c\"", json: "\u{001C}" as JSONValue)
+        
+    }
+    
     func testSerializeArray() {
         let arr: JSONValue = [
             1, 2.1, true, false, "x", nil

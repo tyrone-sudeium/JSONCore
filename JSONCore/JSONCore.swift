@@ -978,10 +978,10 @@ extension JSONSerializer {
                     output.append(solidus)
                 default:
                     output.appendContentsOf("u")
-                    output.append(hexScalars[Int(scalar.value) & 0xF000 >> 12])
-                    output.append(hexScalars[Int(scalar.value) & 0x0F00 >> 8])
-                    output.append(hexScalars[Int(scalar.value) & 0x00F0 >> 4])
-                    output.append(hexScalars[Int(scalar.value) & 0x000F >> 0])
+                    output.append(hexScalars[(Int(scalar.value) & 0xF000) >> 12])
+                    output.append(hexScalars[(Int(scalar.value) & 0x0F00) >> 8])
+                    output.append(hexScalars[(Int(scalar.value) & 0x00F0) >> 4])
+                    output.append(hexScalars[(Int(scalar.value) & 0x000F) >> 0])
                 }
             default:
                 output.append(scalar)
