@@ -27,7 +27,7 @@ script:
   - set -o pipefail
 
   - if [ $RUN_TESTS == "YES" ]; then
-      xcodebuild -project JSONCore.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug test | xcpretty -c
+      xcodebuild -project JSONCore.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug test | xcpretty -c;
     else
-      xcodebuild -project JSONCore.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug build | xcpretty -c
+      xcodebuild -project JSONCore.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug build | xcpretty -c;
     fi
