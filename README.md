@@ -60,8 +60,37 @@ do {
 ```
 
 ## Installation
-I'm not on Carthage or CocoaPods (yet!), however, JSON Core is just a single
-Swift file with zero dependencies, so feel free to make this repo a submodule
-and just drop the `JSONCore.swift` file into your project directly. I will add
-support for Carthage and CocoaPods when I'm happy JSON Core is stable enough for
-production use.
+
+###via Swift Package Manager (Swift 2.2 beta)
+To use JSONCore as a Swift Package Manager package just add the following in
+your `Package.swift` file.
+
+```swift
+import PackageDescription
+
+let package = Package(
+    name: "HelloWorld",
+    dependencies: [
+        .Package(url: "https://github.com/tyrone-sudeium/JSONCore.git", majorVersion: 0))
+    ]
+)
+```
+
+###via Carthage
+To use JSONCore with Carthage add 
+You can use [Carthage](https://github.com/Carthage/Carthage) to install JSONCore
+add the following lines to your Carthage:
+
+```
+github "tyrone-sudeium/JSONCore"
+```
+
+###via Cocoapods
+I'm not on CocoaPods (yet!), however, I will add support for CocoaPods 
+when I'm happy JSON Core is stable enough for production use.
+
+###Manual
+JSON Core is just a single Swift file with zero dependencies, so feel free to
+make this repo a submodule and just drop the `JSONCore.swift` file into your
+project directly.
+
