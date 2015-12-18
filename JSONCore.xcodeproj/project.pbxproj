@@ -277,7 +277,6 @@
 			buildPhases = (
 				8BEEBF591BDB118400F702C8 /* Sources */,
 				8BEEBF5A1BDB118400F702C8 /* Frameworks */,
-				8BEEBF6A1BDB11C500F702C8 /* ShellScript */,
 				8BEEBF5B1BDB118400F702C8 /* Resources */,
 			);
 			buildRules = (
@@ -376,22 +375,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		8BEEBF6A1BDB11C500F702C8 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd ${PROJECT_DIR}/JSONCoreTests\nif [ ! -e \"1.json\" ]; then\n    /usr/bin/env ruby generate_json.rb\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8B4714AA1BDA647800D29CDC /* Sources */ = {
