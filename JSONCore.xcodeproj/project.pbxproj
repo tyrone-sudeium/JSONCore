@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8B41AFE51BDF91D900A7553D /* JSONCorePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B41AFE41BDF91D900A7553D /* JSONCorePerformanceTests.swift */; };
+		8BAD3FCD1C241E1200D362C5 /* JSONCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BEEBF4E1BDB101800F702C8 /* JSONCore.framework */; };
+		8BAD3FD61C241E4500D362C5 /* JSONCorePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAD3FD41C241E4500D362C5 /* JSONCorePerformanceTests.swift */; };
+		8BAD3FD91C241EF200D362C5 /* 1.json in Resources */ = {isa = PBXBuildFile; fileRef = 8BAD3FD81C241EF200D362C5 /* 1.json */; };
 		8BEEBF621BDB118400F702C8 /* JSONCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BEEBF4E1BDB101800F702C8 /* JSONCore.framework */; };
 		8BEEBF681BDB11AD00F702C8 /* JSONCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */; };
-		8BEEBF691BDB11BB00F702C8 /* 1.json in Resources */ = {isa = PBXBuildFile; fileRef = 8B4714CD1BDA6E4C00D29CDC /* 1.json */; };
 		AA5B61241C2266CC006A5464 /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5B61231C2266CC006A5464 /* JSONCore.swift */; };
 		AA5B61251C2266CC006A5464 /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5B61231C2266CC006A5464 /* JSONCore.swift */; };
 		AA5B61261C2266CC006A5464 /* JSONCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5B61231C2266CC006A5464 /* JSONCore.swift */; };
@@ -18,6 +19,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8BAD3FCE1C241E1200D362C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8B4714A61BDA647800D29CDC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8BEEBF4D1BDB101800F702C8;
+			remoteInfo = "JSONCore OSX";
+		};
 		8BEEBF631BDB118400F702C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8B4714A61BDA647800D29CDC /* Project object */;
@@ -28,12 +36,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8B41AFE41BDF91D900A7553D /* JSONCorePerformanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCorePerformanceTests.swift; sourceTree = "<group>"; };
 		8B4714AF1BDA647800D29CDC /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoreTests.swift; sourceTree = "<group>"; };
 		8B4714C01BDA647800D29CDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8B4714CB1BDA6D6900D29CDC /* generate_json.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = generate_json.rb; sourceTree = "<group>"; };
-		8B4714CD1BDA6E4C00D29CDC /* 1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 1.json; sourceTree = "<group>"; };
+		8BAD3FC81C241E1200D362C5 /* JSONCore Performance Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "JSONCore Performance Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8BAD3FCC1C241E1200D362C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8BAD3FD31C241E4500D362C5 /* generate_json.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = generate_json.rb; sourceTree = "<group>"; };
+		8BAD3FD41C241E4500D362C5 /* JSONCorePerformanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCorePerformanceTests.swift; sourceTree = "<group>"; };
+		8BAD3FD81C241EF200D362C5 /* 1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 1.json; sourceTree = "<group>"; };
 		8BEEBF341BDB0FB400F702C8 /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BEEBF381BDB0FB400F702C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BEEBF411BDB0FE900F702C8 /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +61,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BAD3FC51C241E1200D362C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8BAD3FCD1C241E1200D362C5 /* JSONCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,6 +114,7 @@
 				8BEEBF351BDB0FB400F702C8 /* JSONCore watchOS */,
 				8BEEBF421BDB0FE900F702C8 /* JSONCore tvOS */,
 				8B4714BD1BDA647800D29CDC /* JSONCoreTests */,
+				8BAD3FC91C241E1200D362C5 /* JSONCore Performance Tests */,
 				8B4714B01BDA647800D29CDC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,6 +127,7 @@
 				8BEEBF411BDB0FE900F702C8 /* JSONCore.framework */,
 				8BEEBF4E1BDB101800F702C8 /* JSONCore.framework */,
 				8BEEBF5D1BDB118400F702C8 /* JSONCoreTests.xctest */,
+				8BAD3FC81C241E1200D362C5 /* JSONCore Performance Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -124,13 +144,21 @@
 		8B4714BD1BDA647800D29CDC /* JSONCoreTests */ = {
 			isa = PBXGroup;
 			children = (
-				8B4714CD1BDA6E4C00D29CDC /* 1.json */,
-				8B4714CB1BDA6D6900D29CDC /* generate_json.rb */,
 				8B4714BE1BDA647800D29CDC /* JSONCoreTests.swift */,
-				8B41AFE41BDF91D900A7553D /* JSONCorePerformanceTests.swift */,
 				8B4714C01BDA647800D29CDC /* Info.plist */,
 			);
 			path = JSONCoreTests;
+			sourceTree = "<group>";
+		};
+		8BAD3FC91C241E1200D362C5 /* JSONCore Performance Tests */ = {
+			isa = PBXGroup;
+			children = (
+				8BAD3FD81C241EF200D362C5 /* 1.json */,
+				8BAD3FCC1C241E1200D362C5 /* Info.plist */,
+				8BAD3FD31C241E4500D362C5 /* generate_json.rb */,
+				8BAD3FD41C241E4500D362C5 /* JSONCorePerformanceTests.swift */,
+			);
+			path = "JSONCore Performance Tests";
 			sourceTree = "<group>";
 		};
 		8BEEBF351BDB0FB400F702C8 /* JSONCore watchOS */ = {
@@ -217,6 +245,25 @@
 			productReference = 8B4714AF1BDA647800D29CDC /* JSONCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		8BAD3FC71C241E1200D362C5 /* JSONCore Performance Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8BAD3FD01C241E1200D362C5 /* Build configuration list for PBXNativeTarget "JSONCore Performance Tests" */;
+			buildPhases = (
+				8BAD3FC41C241E1200D362C5 /* Sources */,
+				8BAD3FC51C241E1200D362C5 /* Frameworks */,
+				8BAD3FD71C241EB300D362C5 /* ShellScript */,
+				8BAD3FC61C241E1200D362C5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8BAD3FCF1C241E1200D362C5 /* PBXTargetDependency */,
+			);
+			name = "JSONCore Performance Tests";
+			productName = "JSONCore Performance Tests";
+			productReference = 8BAD3FC81C241E1200D362C5 /* JSONCore Performance Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8BEEBF331BDB0FB400F702C8 /* JSONCore watchOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8BEEBF391BDB0FB400F702C8 /* Build configuration list for PBXNativeTarget "JSONCore watchOS" */;
@@ -295,12 +342,15 @@
 		8B4714A61BDA647800D29CDC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0710;
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Tyrone Trevorrow";
 				TargetAttributes = {
 					8B4714AE1BDA647800D29CDC = {
 						CreatedOnToolsVersion = 7.1;
+					};
+					8BAD3FC71C241E1200D362C5 = {
+						CreatedOnToolsVersion = 7.2;
 					};
 					8BEEBF331BDB0FB400F702C8 = {
 						CreatedOnToolsVersion = 7.1;
@@ -333,6 +383,7 @@
 				8BEEBF401BDB0FE900F702C8 /* JSONCore tvOS */,
 				8BEEBF4D1BDB101800F702C8 /* JSONCore OSX */,
 				8BEEBF5C1BDB118400F702C8 /* JSONCoreTests */,
+				8BAD3FC71C241E1200D362C5 /* JSONCore Performance Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -342,6 +393,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BAD3FC61C241E1200D362C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8BAD3FD91C241EF200D362C5 /* 1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,11 +429,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BEEBF691BDB11BB00F702C8 /* 1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8BAD3FD71C241EB300D362C5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${PROJECT_DIR}/JSONCore Performance Tests\"\nif [ ! -e \"1.json\" ]; then\n    /usr/bin/env ruby generate_json.rb\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8B4714AA1BDA647800D29CDC /* Sources */ = {
@@ -382,6 +456,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA5B61241C2266CC006A5464 /* JSONCore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BAD3FC41C241E1200D362C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8BAD3FD61C241E4500D362C5 /* JSONCorePerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,13 +496,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				8BEEBF681BDB11AD00F702C8 /* JSONCoreTests.swift in Sources */,
-				8B41AFE51BDF91D900A7553D /* JSONCorePerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8BAD3FCF1C241E1200D362C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8BEEBF4D1BDB101800F702C8 /* JSONCore OSX */;
+			targetProxy = 8BAD3FCE1C241E1200D362C5 /* PBXContainerItemProxy */;
+		};
 		8BEEBF641BDB118400F702C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8BEEBF4D1BDB101800F702C8 /* JSONCore OSX */;
@@ -557,6 +643,37 @@
 				SKIP_INSTALL = YES;
 				SWIFT_DISABLE_SAFETY_CHECKS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		8BAD3FD11C241E1200D362C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "JSONCore Performance Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sudeium.JSONCore-Performance-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8BAD3FD21C241E1200D362C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "JSONCore Performance Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sudeium.JSONCore-Performance-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -741,6 +858,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		8BAD3FD01C241E1200D362C5 /* Build configuration list for PBXNativeTarget "JSONCore Performance Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8BAD3FD11C241E1200D362C5 /* Debug */,
+				8BAD3FD21C241E1200D362C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		8BEEBF391BDB0FB400F702C8 /* Build configuration list for PBXNativeTarget "JSONCore watchOS" */ = {
 			isa = XCConfigurationList;

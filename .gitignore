@@ -18,5 +18,4 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-JSONCoreTests/1.json
-
+JSONCore Performance Tests/1.json
