@@ -47,10 +47,10 @@ over `NSString`.
 ```Swift
 let json = "{\"test\": 1}"
 do {
-    let value = try JSONParser.parseData(json.unicodeScalars)
+    let value = try JSONParser.parseString(json)
     // value is a JSONValue enum, which for our JSON should be
     // an Object/Dictionary
-    guard let test = value.object?["test"]?.int else { return }
+    guard let test = value["test"]?.int else { return }
     print("test is \(test)")
 } catch let err {
     if let printableError = err as? CustomStringConvertible {
@@ -71,7 +71,7 @@ import PackageDescription
 let package = Package(
     name: "HelloWorld",
     dependencies: [
-        .Package(url: "https://github.com/tyrone-sudeium/JSONCore.git", majorVersion: 0))
+        .Package(url: "https://github.com/tyrone-sudeium/JSONCore.git", majorVersion: 1))
     ]
 )
 ```

@@ -357,6 +357,19 @@ public class JSONParser {
         let parser = JSONParser(data: data)
         return try parser.parse()
     }
+    
+    /**
+     A shortcut for creating a `JSONParser` and having it parse the given `String`.
+     This is a blocking operation, and will block the calling thread until parsing
+     finishes or throws an error.
+     - Parameter string: The `String` of the input JSON.
+     - Returns: The root `JSONValue` node from the input data.
+     - Throws: A `JSONParseError` if something failed during parsing.
+     */
+    public class func parseString(string: String) throws -> JSONValue {
+        let parser = JSONParser(data: string.unicodeScalars)
+        return try parser.parse()
+    }
 
     /**
      Designated initializer for `JSONParser`, which requires an input Unicode scalar
