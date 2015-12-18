@@ -1,4 +1,7 @@
 # JSON Core
+
+[![Build Status](https://travis-ci.org/tyrone-sudeium/JSONCore.svg)](https://travis-ci.org/tyrone-sudeium/JSONCore)
+
 JSON Core is a JSON parser and serializer written using only core Swift. This
 means it has no dependencies on Foundation, UIKit, AppKit or even Darwin. This
 is a true parser and serializer, it doesn't use `NSJSONSerialization` at all,
