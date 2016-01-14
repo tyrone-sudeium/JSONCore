@@ -939,7 +939,7 @@ extension JSONSerializer {
                 output.appendContentsOf(" ")
             }
             try serializeValue(value, indentLevel: indentLevel + 1)
-            i++
+            i += 1
             if i != obj.count {
                 output.append(comma)
                 
@@ -957,7 +957,7 @@ extension JSONSerializer {
         for val in arr {
             serializeSpaces(indentLevel + 1)
             try serializeValue(val, indentLevel: indentLevel + 1)
-            i++
+            i += 1
             if i != arr.count {
                 output.append(comma)
             }
