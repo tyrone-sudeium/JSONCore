@@ -42,7 +42,7 @@ class JSONCoreTests: XCTestCase {
         super.tearDown()
     }
     
-    func expectError(error: JSONParseError, json: String, file: StaticString = #file, line: UInt = #line) {
+    func expectError(error: JSONParseError, json: String, file: StaticString = __FILE__, line: UInt = __LINE__) {
         do {
             try JSONParser.parse(json.unicodeScalars)
             XCTFail("Expected error, got success", file: file, line: line)
@@ -51,7 +51,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectErrorString(error: String, json: String, file: StaticString = #file, line: UInt = #line) {
+    func expectErrorString(error: String, json: String, file: StaticString = __FILE__, line: UInt = __LINE__) {
         do {
             try JSONParser.parse(json.unicodeScalars)
             XCTFail("Expected error, got success", file: file, line: line)
@@ -63,7 +63,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectValue(value: JSON, json: String, file: StaticString = #file, line: UInt = #line) {
+    func expectValue(value: JSON, json: String, file: StaticString = __FILE__, line: UInt = __LINE__) {
         do {
             let parsedValue = try JSONParser.parse(json.unicodeScalars)
             XCTAssertEqual(value, parsedValue, file: file, line: line)
@@ -74,7 +74,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectString(string: String, json: JSON, file: StaticString = #file, line: UInt = #line) {
+    func expectString(string: String, json: JSON, file: StaticString = __FILE__, line: UInt = __LINE__) {
         do {
             let serialized = try json.jsonString()
             XCTAssertEqual(string, serialized, file: file, line: line)
@@ -210,7 +210,7 @@ class JSONCoreTests: XCTestCase {
         XCTAssertEqual(str, expected)
     }
     
-    func testOptionalSubscripting() {
+    func testSubscriptGetter() {
         var json: JSON = [
             "name": "Ethan",
             "yob": 1995,
@@ -236,16 +236,23 @@ class JSONCoreTests: XCTestCase {
         
         XCTAssertEqual(json, json2)
         
-        XCTAssertEqual(json["yob"]?.int!, 1995)
-        XCTAssertEqual(json["computer"]["purchased"]?.int!, 2013)
-        XCTAssertEqual(json["computer"]["memory"]["type"]?.string!, "DDR3")
-        XCTAssertEqual(json["computer"]["ports"][1]?.string!, "usb2")
+        XCTAssertEqual(json["yob"].int, 1995)
+        XCTAssertEqual(json["computer"]["purchased"].int, 2013)
+        XCTAssertEqual(json["computer"]["memory"]["type"].string, "DDR3")
+        XCTAssertEqual(json["computer"]["memory"]["type"].string, "DDR3")
+        XCTAssertEqual(json["computer"]?["memory"]?["type"].string, "DDR3")
+        XCTAssertEqual(json["computer"]["ports"][1].string, "usb2")
+        XCTAssertEqual(json["computer"]["ports"][-1].string, nil)
     }
     
     func testSubscriptSetter() {
-        var json: JSON = ["height": 1.90]
-        XCTAssertEqual(json["height"]?.double!, 1.90)
+        var json: JSON = ["height": 1.90, "array": [1, 2, 3]]
+        XCTAssertEqual(json["height"].double, 1.90)
         json["height"] = 1.91
-        XCTAssertEqual(json["height"]?.double!, 1.91)
+        XCTAssertEqual(json["height"].double, 1.91)
+        
+        XCTAssertEqual(json["array"][0], 1)
+        json["array"][0] = 4
+        XCTAssertEqual(json["array"][0], 4)
     }
 }

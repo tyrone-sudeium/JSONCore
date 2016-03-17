@@ -36,7 +36,7 @@ public indirect enum JSON {
     case string(String)
     case integer(JSONInteger)
     case double(Double)
-
+    
     /**
         Turns a nested graph of `JSON`s into a Swift `String`. This produces JSON data that
         strictly conforms to [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
@@ -180,7 +180,7 @@ extension JSON: FloatLiteralConvertible {
     }
 }
 
-extension JSON : StringLiteralConvertible {
+extension JSON: StringLiteralConvertible {
     public init(stringLiteral value: String) {
         self = .string(value)
     }
@@ -194,13 +194,13 @@ extension JSON : StringLiteralConvertible {
     }
 }
 
-extension JSON : ArrayLiteralConvertible {
+extension JSON: ArrayLiteralConvertible {
     public init(arrayLiteral elements: JSON...) {
         self = .array(elements)
     }
 }
 
-extension JSON : DictionaryLiteralConvertible {
+extension JSON: DictionaryLiteralConvertible {
     public init(dictionaryLiteral elements: (String, JSON)...) {
         var dict: [String: JSON] = [:]
         for (k, v) in elements {
@@ -211,7 +211,7 @@ extension JSON : DictionaryLiteralConvertible {
     }
 }
 
-extension JSON : NilLiteralConvertible {
+extension JSON: NilLiteralConvertible {
     public init(nilLiteral: ()) {
         self = .null
     }
@@ -288,14 +288,39 @@ extension Optional where Wrapped: _JSONType {
     public subscript(key: String) -> JSON? {
         // TODO(ethan): find a better way, should we fatalError() if it isn't `JSON`
         // Would be best if we could constrain extensions to be Non-Generic. Swift3?
-        guard let o = (self as? JSON)?.object else { return nil }
-        return o[key]
+        get {
+            guard let o = (self as? JSON)?.object else { return nil }
+            return o[key]
+        }
+        
+        set {
+            guard var o = (self as? JSON)?.object else { return }
+            switch newValue {
+            case .None: o.removeValueForKey(key)
+            case .Some(let value):
+                o[key] = value
+                self = (JSON.object(o) as? Wrapped)
+            }
+        }
     }
 
     /// returns the JSON value at index iff `Wrapped` is `JSON.array` and the index is within the arrays bounds
     public subscript(index: Int) -> JSON? {
-        guard let a = (self as? JSON)?.array where a.indices ~= index else { return nil }
-        return a[index]
+        get {
+            guard let a = (self as? JSON)?.array where a.indices ~= index else { return nil }
+            return a[index]
+        }
+        
+        set {
+            guard var a = (self as? JSON)?.array else { return }
+            switch newValue {
+            case .None: a.removeAtIndex(index)
+            case .Some(let value):
+                a[index] = value
+                self = (JSON.array(a) as? Wrapped)
+            }
+            
+        }
     }
 
     /// Returns an array of `JSON` iff `Wrapped` is `JSON.array`
@@ -523,7 +548,7 @@ extension JSONParser {
         if scalar != leftCurlyBracket {
             throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
         }
-        var dictBuilder = [String : JSON]()
+        var dictBuilder = [String: JSON]()
         try nextScalar()
         if scalar == rightCurlyBracket {
             // Empty object
@@ -786,7 +811,7 @@ extension JSONParser {
             throw JSONParseError.UnexpectedCharacter(lineNumber: lineNumber, characterNumber: charNumber)
         }
 
-        let sign = isNegative ? -1 : 1
+        let sign = isNegative ? -1: 1
         if hasDecimal || hasExponent {
             divisor /= 10
             var number = Double(sign) * (Double(integer) + (Double(decimal) / divisor))
