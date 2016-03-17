@@ -42,7 +42,7 @@ class JSONCoreTests: XCTestCase {
         super.tearDown()
     }
     
-    func expectError(error: JSONParseError, json: String, file: StaticString = __FILE__, line: UInt = __LINE__) {
+    func expectError(error: JSONParseError, json: String, file: String = __FILE__, line: UInt = __LINE__) {
         do {
             try JSONParser.parse(json.unicodeScalars)
             XCTFail("Expected error, got success", file: file, line: line)
@@ -51,7 +51,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectErrorString(error: String, json: String, file: StaticString = __FILE__, line: UInt = __LINE__) {
+    func expectErrorString(error: String, json: String, file: String = __FILE__, line: UInt = __LINE__) {
         do {
             try JSONParser.parse(json.unicodeScalars)
             XCTFail("Expected error, got success", file: file, line: line)
@@ -63,7 +63,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectValue(value: JSON, json: String, file: StaticString = __FILE__, line: UInt = __LINE__) {
+    func expectValue(value: JSON, json: String, file: String = __FILE__, line: UInt = __LINE__) {
         do {
             let parsedValue = try JSONParser.parse(json.unicodeScalars)
             XCTAssertEqual(value, parsedValue, file: file, line: line)
@@ -74,7 +74,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectString(string: String, json: JSON, file: StaticString = __FILE__, line: UInt = __LINE__) {
+    func expectString(string: String, json: JSON, file: String = __FILE__, line: UInt = __LINE__) {
         do {
             let serialized = try json.jsonString()
             XCTAssertEqual(string, serialized, file: file, line: line)
