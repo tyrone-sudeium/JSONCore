@@ -21,7 +21,7 @@ class JSONCorePerformanceTests: XCTestCase {
         super.tearDown()
     }
     
-    func testPerformanceWithTwoHundredMegabyteFile() {
+    func testParsePerformanceWithTwoHundredMegabyteFile() {
         let bundle = NSBundle(forClass: self.dynamicType)
         let path = bundle.pathForResource("1", ofType: "json")
         let data = NSData(contentsOfFile: path!)!
@@ -46,6 +46,17 @@ class JSONCorePerformanceTests: XCTestCase {
                     XCTFail("JSON parse error: \(printableError)")
                 }
             }
+        }
+    }
+    
+    func testSerializationPerformanceWithTwoHundredMegabyteFile() {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let path = bundle.pathForResource("1", ofType: "json")
+        let data = NSData(contentsOfFile: path!)!
+        let json = String.fromCString(unsafeBitCast(data.bytes, UnsafePointer<CChar>.self))!
+        let value = try! JSONParser.parse(json.unicodeScalars)
+        measureBlock {
+            try! value.jsonString()
         }
     }
 }
