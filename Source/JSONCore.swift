@@ -57,8 +57,9 @@ public indirect enum JSON {
             var str = ""
             for (i, pair) in o.enumerate() {
                 let (key, value) = pair
+                let keyJSONString = try JSON.string(key).jsonString()
                 let valueJSONString = try value.jsonString()
-                let keyPair = ["\"", key, "\":", valueJSONString].joinWithSeparator("")
+                let keyPair = [keyJSONString, ":", valueJSONString].joinWithSeparator("")
                 str.appendContentsOf(keyPair)
                 guard i.successor() != o.count else { break }
                 str.appendContentsOf(",")
