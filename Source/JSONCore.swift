@@ -42,29 +42,80 @@ public indirect enum JSON {
         strictly conforms to [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
         TODO: It can optionally pretty-print the output for debugging, but this comes with a non-negligible performance cost.
     */
-    public func jsonString() throws -> String {
+    public func jsonString(prettyPrint prettyPrint: Bool = false) throws -> String {
+        return try jsonString(prettyPrint: prettyPrint, indentLevel: 0)
+    }
+    
+    internal func jsonString(prettyPrint prettyPrint: Bool, indentLevel: Int) throws -> String {
+        func spacesForIndent(indentLevel: Int) -> String {
+            var str = ""
+            for _ in 0..<indentLevel {
+                str.appendContentsOf("  ")
+            }
+            return str
+        }
+        
         switch self {
         case .array(let a):
-            var str = ""
-            for (i, v) in a.enumerate() {
-                str.appendContentsOf(try v.jsonString())
-                guard i != a.endIndex.predecessor() else { break }
-                str.appendContentsOf(",")
+            var str = "["
+            if prettyPrint {
+                str.appendContentsOf("\n")
             }
-            return "[" + str + "]"
+            for (i, v) in a.enumerate() {
+                if prettyPrint {
+                    str.appendContentsOf(spacesForIndent(indentLevel + 1))
+                }
+                str.appendContentsOf(try v.jsonString(prettyPrint: prettyPrint, indentLevel: indentLevel + 1))
+                guard i != a.endIndex.predecessor() else {
+                    if prettyPrint {
+                        str.appendContentsOf("\n")
+                    }
+                    break
+                }
+                str.appendContentsOf(",")
+                if prettyPrint {
+                    str.appendContentsOf("\n")
+                }
+            }
+            if prettyPrint {
+                str.appendContentsOf(spacesForIndent(indentLevel))
+            }
+            str.append(rightSquareBracket)
+            return str
 
         case .object(let o):
-            var str = ""
+            var str = "{"
+            if prettyPrint {
+                str.appendContentsOf("\n")
+            }
             for (i, pair) in o.enumerate() {
+                if prettyPrint {
+                    str.appendContentsOf(spacesForIndent(indentLevel + 1))
+                }
                 let (key, value) = pair
                 let keyJSONString = try JSON.string(key).jsonString()
-                let valueJSONString = try value.jsonString()
-                let keyPair = [keyJSONString, ":", valueJSONString].joinWithSeparator("")
-                str.appendContentsOf(keyPair)
-                guard i.successor() != o.count else { break }
+                let valueJSONString = try value.jsonString(prettyPrint: prettyPrint, indentLevel: indentLevel + 1)
+                if prettyPrint {
+                    str.appendContentsOf(keyJSONString + ": " + valueJSONString)
+                } else {
+                    str.appendContentsOf(keyJSONString + ":" + valueJSONString)
+                }
+                guard i.successor() != o.count else {
+                    if prettyPrint {
+                        str.appendContentsOf("\n")
+                    }
+                    break
+                }
                 str.appendContentsOf(",")
+                if prettyPrint {
+                    str.appendContentsOf("\n")
+                }
             }
-            return "{" + str + "}"
+            if prettyPrint {
+                str.appendContentsOf(spacesForIndent(indentLevel))
+            }
+            str.append(rightCurlyBracket)
+            return str
 
         case .string(let s):
             var output = ""
