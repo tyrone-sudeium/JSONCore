@@ -28,7 +28,7 @@ class JSONCorePerformanceTests: XCTestCase {
         let json = String.fromCString(unsafeBitCast(data.bytes, UnsafePointer<CChar>.self))!
         measureBlock {
             do {
-                let value = try JSONParser.parseData(json.unicodeScalars)
+                let value = try JSONParser.parse(json.unicodeScalars)
                 let coordinates = value.object!["coordinates"]!.array!
                 let len = coordinates.count
                 var x = 0.0; var y = 0.0; var z = 0.0
