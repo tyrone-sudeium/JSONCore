@@ -19,13 +19,6 @@ public enum JSONSerializeError: ErrorType {
     case InvalidNumber
 }
 
-/**
-    Allows for the Int representation to be switched quickly
-    Will maybe be non conformant to the JSON spec on 32bit machines
-    Swift 3 will bring #if os(32bit) I think, that will be an approach to fix this.
-*/
-public typealias JSONInteger = Int
-
 /// Any value that can be expressed in JSON has a representation in `JSON`.
 public enum JSON {
     case object([String: JSON])
@@ -34,7 +27,7 @@ public enum JSON {
     case null
     case bool(Bool)
     case string(String)
-    case integer(JSONInteger)
+    case integer(Int64)
     case double(Double)
     
     /**
@@ -46,37 +39,44 @@ public enum JSON {
         return try JSONSerializer(value: self, prettyPrint: prettyPrint, lineEndings: lineEndings).serialize()
     }
     
-    /// Returns this enum's associated Array value if it is one, `nil` otherwise.
+    /// Returns this enum's associated Array value iff `self == .array(_)`, `nil` otherwise.
     public var array: [JSON]? {
         guard case .array(let a) = self else { return nil }
         return a
     }
 
-    /// Returns this enum's associated Dictionary value if it is one, `nil` otherwise.
+    /// Returns this enum's associated Dictionary value iff `self == .object(_), `nil` otherwise.
     public var object: [String: JSON]? {
         guard case .object(let o) = self else { return nil }
         return o
     }
 
-    /// Returns this enum's associated String value if it is one, `nil` otherwise.
+    /// Returns this enum's associated String value iff `self == .string(_)`, `nil` otherwise.
     public var string: String? {
         guard case .string(let s) = self else { return nil }
         return s
     }
 
-    /// Returns this enum's associated `JSONInteger` value if it is one, `nil` otherwise.
-    public var int: JSONInteger? {
+    /// Returns this enum's associated `Int64` value as an `Int` iff `self == .integer(_), `nil` otherwise.
+    public var int: Int? {
+        guard case .integer(let i) = self else { return nil }
+        // TODO (ethan): what behaviour does this have when the native Int size is 32 bits?
+        return Int(i)
+    }
+	
+    /// Returns this enum's associated `Int64` iff `self == .integer(_)`, `nil` otherwise.
+    public var int64: Int64? {
         guard case .integer(let i) = self else { return nil }
         return i
     }
 
-    /// Returns this enum's associated Bool value if it is one, `nil` otherwise.
+    /// Returns this enum's associated Bool value iff `self == .bool(_)`, `nil` otherwise.
     public var bool: Bool? {
         guard case .bool(let b) = self else { return nil }
         return b
     }
 
-    /// Returns this enum's associated Double value if it is one, `nil` otherwise.
+    /// Returns this enum's associated Double value iff `self == .double(_)`, `nil` otherwise.
     public var double: Double? {
         guard case .double(let d) = self else { return nil }
         return d
@@ -101,7 +101,7 @@ public func ==(lhs: JSON, rhs: JSON) -> Bool {
 
 extension JSON: IntegerLiteralConvertible {
     public init(integerLiteral value: IntegerLiteralType) {
-        let val = JSONInteger(value)
+        let val = Int64(value)
         self = .integer(val)
     }
 }
@@ -217,7 +217,7 @@ extension JSON: _JSONType {}
 
 // TODO: Support set through these subscripts
 extension Optional where Wrapped: _JSONType {
-    /// returns the `JSON` value for key iff `Wrapped` is `JSON.object` and there is a value for the key
+    /// returns the `JSON` value for key iff `Wrapped == JSON.object(_)` and there is a value for the key
     public subscript(key: String) -> JSON? {
         // TODO(ethan): find a better way, should we fatalError() if it isn't `JSON`
         // Would be best if we could constrain extensions to be Non-Generic. Swift3?
@@ -237,7 +237,7 @@ extension Optional where Wrapped: _JSONType {
         }
     }
 
-    /// returns the JSON value at index iff `Wrapped` is `JSON.array` and the index is within the arrays bounds
+    /// returns the JSON value at index iff `Wrapped == JSON.array(_)` and the index is within the arrays bounds
     public subscript(index: Int) -> JSON? {
         get {
             guard let a = (self as? JSON)?.array where a.indices ~= index else { return nil }
@@ -256,37 +256,43 @@ extension Optional where Wrapped: _JSONType {
         }
     }
 
-    /// Returns an array of `JSON` iff `Wrapped` is `JSON.array`
+    /// Returns an array of `JSON` iff `Wrapped == JSON.array(_)`
     public var array: [JSON]? {
         guard let a = (self as? JSON)?.array else { return nil }
         return a
     }
 
-    /// Returns a `JSON` object iff `Wrapped` is `JSON.object`
+    /// Returns a `JSON` object iff `Wrapped == JSON.object(_)`
     public var object: [String: JSON]? {
         guard let o = (self as? JSON)?.object else { return nil }
         return o
     }
 
-    /// Returns a `String` iff `Wrapped` is `JSON.string`
+    /// Returns a `String` iff `Wrapped == JSON.string(_)`
     public var string: String? {
         guard let s = (self as? JSON)?.string else { return nil }
         return s
     }
+	
+    /// Returns an `Int64` iff `Wrapped == JSON.integer(_)`
+    public var int64: Int64? {
+        guard let i = (self as? JSON)?.int64 else { return nil }
+        return i
+    }
 
-    /// Returns a `JSONInteger` iff `Wrapped` is `JSON.integer`
-    public var int: JSONInteger? {
+    /// Returns an `Int` iff `Wrapped == JSON.integer(_)`
+    public var int: Int? {
         guard let i = (self as? JSON)?.int else { return nil }
         return i
     }
 
-    /// Returns a `Bool` iff `Wrapped` is `JSON.bool`
+    /// Returns a `Bool` iff `Wrapped == JSON.bool(_)`
     public var bool: Bool? {
         guard let b = (self as? JSON)?.bool else { return nil }
         return b
     }
 
-    /// Returns a `Double` iff `Wrapped` is `JSON.double`
+    /// Returns a `Double` iff `Wrapped == JSON.double(_)`
     public var double: Double? {
         guard let d = (self as? JSON)?.double else { return nil }
         return d
@@ -777,7 +783,7 @@ extension JSONParser {
                     number = Int64(integer)
                 }
             }
-            return JSON.integer(JSONInteger(number))
+            return JSON.integer(Int64(number))
         }
     }
 
@@ -985,7 +991,7 @@ extension JSONSerializer {
           output.appendContentsOf(f.description)
     }
 	
-    func serializeInt(i: JSONInteger) {
+    func serializeInt(i: Int64) {
         // TODO: Is CustomStringConvertible for number types affected by locale?
         output.appendContentsOf(i.description)
     }
