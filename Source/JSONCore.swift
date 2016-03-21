@@ -42,9 +42,10 @@ public enum JSON {
         strictly conforms to [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
         It can optionally pretty-print the output for debugging, but this comes with a non-negligible performance cost.
     */
-    public func serialized(prettyPrint prettyPrint: Bool = false, lineEndings: JSONSerializer.LineEndings = .Unix) throws -> String {
-        return try JSONSerializer(value: self, prettyPrint: prettyPrint, lineEndings: lineEndings).serialize()
-    }
+    // This is nice, but it doesn't work with the Swift 2.1 compiler in Release mode
+//    public func serialized(prettyPrint prettyPrint: Bool = false, lineEndings: JSONSerializer.LineEndings = .Unix) throws -> String {
+//        return try JSONSerializer(value: self, prettyPrint: prettyPrint, lineEndings: lineEndings).serialize()
+//    }
     
     /// Returns this enum's associated Array value if it is one, `nil` otherwise.
     public var array: [JSON]? {

@@ -30,6 +30,12 @@ public func == (lhs: JSONParseError, rhs: JSONParseError) -> Bool {
     }
 }
 
+extension JSON {
+    public func serialized(prettyPrint prettyPrint: Bool = false, lineEndings: JSONSerializer.LineEndings = .Unix) throws -> String {
+        return try JSONSerializer(value: self, prettyPrint: prettyPrint, lineEndings: lineEndings).serialize()
+    }
+}
+
 class JSONCoreTests: XCTestCase {
     
     override func setUp() {

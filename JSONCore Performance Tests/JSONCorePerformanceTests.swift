@@ -52,7 +52,7 @@ class JSONCorePerformanceTests: XCTestCase {
         }
         
         measureBlock {
-            try! self.json!.serialized()
+            try! JSONSerializer.serializeValue(self.json!)
         }
     }
     
@@ -62,7 +62,7 @@ class JSONCorePerformanceTests: XCTestCase {
         }
         
         measureBlock {
-            try! self.json!.serialized(prettyPrint: true)
+            try! JSONSerializer.serializeValue(self.json!, prettyPrint: true)
         }
     }
 }
