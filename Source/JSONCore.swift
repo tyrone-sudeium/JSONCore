@@ -29,7 +29,7 @@ public enum JSON {
     case string(String)
     case integer(Int64)
     case double(Double)
-    
+
     /**
         Turns a nested graph of `JSON`s into a Swift `String`. This produces JSON data that
         strictly conforms to [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
@@ -38,7 +38,7 @@ public enum JSON {
     public func serialized(prettyPrint prettyPrint: Bool = false, lineEndings: JSONSerializer.LineEndings = .Unix) throws -> String {
         return try JSONSerializer(value: self, prettyPrint: prettyPrint, lineEndings: lineEndings).serialize()
     }
-    
+
     /// Returns this enum's associated Array value iff `self == .array(_)`, `nil` otherwise.
     public var array: [JSON]? {
         guard case .array(let a) = self else { return nil }
@@ -63,7 +63,7 @@ public enum JSON {
         // TODO (ethan): what behaviour does this have when the native Int size is 32 bits?
         return Int(i)
     }
-	
+
     /// Returns this enum's associated `Int64` iff `self == .integer(_)`, `nil` otherwise.
     public var int64: Int64? {
         guard case .integer(let i) = self else { return nil }
@@ -225,7 +225,7 @@ extension Optional where Wrapped: _JSONType {
             guard let o = (self as? JSON)?.object else { return nil }
             return o[key]
         }
-        
+
         set {
             guard var o = (self as? JSON)?.object else { return }
             switch newValue {
@@ -243,7 +243,7 @@ extension Optional where Wrapped: _JSONType {
             guard let a = (self as? JSON)?.array where a.indices ~= index else { return nil }
             return a[index]
         }
-        
+
         set {
             guard var a = (self as? JSON)?.array else { return }
             switch newValue {
@@ -252,7 +252,7 @@ extension Optional where Wrapped: _JSONType {
                 a[index] = value
                 self = (JSON.array(a) as? Wrapped)
             }
-            
+
         }
     }
 
@@ -273,7 +273,7 @@ extension Optional where Wrapped: _JSONType {
         guard let s = (self as? JSON)?.string else { return nil }
         return s
     }
-	
+
     /// Returns an `Int64` iff `Wrapped == JSON.integer(_)`
     public var int64: Int64? {
         guard let i = (self as? JSON)?.int64 else { return nil }
@@ -829,7 +829,7 @@ extension JSONParser {
     It can optionally pretty-print the output for debugging, but this comes with a non-negligible performance cost.
 */
 public class JSONSerializer {
-    
+
     /// What line endings should the pretty printer use
     public enum LineEndings: String {
         /// Unix (i.e Linux, Darwin) line endings: line feed
@@ -839,10 +839,10 @@ public class JSONSerializer {
     }
     /// Whether this serializer will pretty print output or not.
     public let prettyPrint: Bool
-    
+
     /// What line endings should the pretty printer use
     public let lineEndings: LineEndings
-    
+
     /**
      Designated initializer for `JSONSerializer`, which requires an input `JSONValue`.
      - Parameter value: The `JSONValue` to convert to a `String`.
@@ -855,7 +855,7 @@ public class JSONSerializer {
         self.rootValue = value
         self.lineEndings = lineEndings
     }
-    
+
     /**
      Shortcut for creating a `JSONSerializer` and having it serialize the given
      value.
@@ -870,7 +870,7 @@ public class JSONSerializer {
         let serializer = JSONSerializer(value: value, prettyPrint: prettyPrint)
         return try serializer.serialize()
     }
-    
+
     /**
      Serializes the value passed during initialization.
      - Returns: The serialized value as a `String`.
@@ -880,7 +880,7 @@ public class JSONSerializer {
         try serializeValue(rootValue)
         return output
     }
-    
+
     // MARK: Internals: Properties
     let rootValue: JSON
     var output: String = ""
@@ -888,13 +888,13 @@ public class JSONSerializer {
 
 // MARK: JSONSerializer Internals
 extension JSONSerializer {
-    
+
     func serializeValue(value: JSON, indentLevel: Int = 0) throws {
         switch value {
-		case .double(let d):
-			try serializeDouble(d)
-		case .integer(let i):
-			serializeInt(i)
+        case .double(let d):
+            try serializeDouble(d)
+        case .integer(let i):
+            serializeInt(i)
         case .null:
             serializeNull()
         case .string(let s):
@@ -907,7 +907,7 @@ extension JSONSerializer {
             try serializeArray(a, indentLevel: indentLevel)
         }
     }
-    
+
     func serializeObject(obj: [String : JSON], indentLevel: Int = 0) throws {
         output.append(leftCurlyBracket)
         serializeNewline()
@@ -923,14 +923,14 @@ extension JSONSerializer {
             i += 1
             if i != obj.count {
                 output.append(comma)
-                
+
             }
             serializeNewline()
         }
         serializeSpaces(indentLevel)
         output.append(rightCurlyBracket)
     }
-    
+
     func serializeArray(arr: [JSON], indentLevel: Int = 0) throws {
         output.append(leftSquareBracket)
         serializeNewline()
@@ -947,7 +947,7 @@ extension JSONSerializer {
         serializeSpaces(indentLevel)
         output.append(rightSquareBracket)
     }
-    
+
     func serializeString(str: String) {
         output.append(quotationMark)
         var generator = str.unicodeScalars.generate()
@@ -983,19 +983,19 @@ extension JSONSerializer {
         }
         output.append(quotationMark)
     }
-    
+
     func serializeDouble(f: Double) throws {
-			guard f.isFinite else { throw JSONSerializeError.InvalidNumber }
+            guard f.isFinite else { throw JSONSerializeError.InvalidNumber }
           // TODO: Is CustomStringConvertible for number types affected by locale?
           // TODO: Is CustomStringConvertible for Double fast?
           output.appendContentsOf(f.description)
     }
-	
+
     func serializeInt(i: Int64) {
         // TODO: Is CustomStringConvertible for number types affected by locale?
         output.appendContentsOf(i.description)
     }
-	
+
     func serializeBool(bool: Bool) {
         switch bool {
         case true:
@@ -1004,18 +1004,18 @@ extension JSONSerializer {
             output.appendContentsOf("false")
         }
     }
-	
+
     func serializeNull() {
         output.appendContentsOf("null")
     }
-    
+
     @inline(__always)
     private final func serializeNewline() {
         if prettyPrint {
             output.appendContentsOf(lineEndings.rawValue)
         }
     }
-    
+
     @inline(__always)
     private final func serializeSpaces(indentLevel: Int = 0) {
         if prettyPrint {
