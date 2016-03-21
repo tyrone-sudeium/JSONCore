@@ -99,6 +99,50 @@ public func ==(lhs: JSON, rhs: JSON) -> Bool {
     }
 }
 
+// MARK: - JSONEncodable
+
+/// Used to declare that that a type can be represented as JSON
+public protocol JSONEncodable {
+    func encodedToJSON() -> JSON
+}
+
+extension JSON: JSONEncodable {
+    public init(_ value: JSONEncodable) {
+        self = value.encodedToJSON()
+    }
+
+    public func encodedToJSON() -> JSON {
+        return self
+    }
+}
+
+extension Bool: JSONEncodable {
+    public func encodedToJSON() -> JSON {
+        return .bool(self)
+    }
+}
+
+extension String: JSONEncodable {
+    public func encodedToJSON() -> JSON {
+        return .string(self)
+    }
+}
+
+//TODO (ethan): Check if other Int types can be made to conform to JSONEncodable without ambiguity.
+extension Int: JSONEncodable {
+    public func encodedToJSON() -> JSON {
+        return .integer(self)
+    }
+}
+
+extension Double: JSONEncodable {
+    public func encodedToJSON() -> JSON {
+        return .double(self)
+    }
+}
+
+// MARK: - Literal Convertible
+
 extension JSON: IntegerLiteralConvertible {
     public init(integerLiteral value: IntegerLiteralType) {
         let val = JSONInteger(value)
@@ -128,16 +172,16 @@ extension JSON: StringLiteralConvertible {
 }
 
 extension JSON: ArrayLiteralConvertible {
-    public init(arrayLiteral elements: JSON...) {
-        self = .array(elements)
+    public init(arrayLiteral elements: JSONEncodable...) {
+			self = .array(elements.map({ $0.encodedToJSON() }))
     }
 }
 
 extension JSON: DictionaryLiteralConvertible {
-    public init(dictionaryLiteral elements: (String, JSON)...) {
+    public init(dictionaryLiteral elements: (String, JSONEncodable)...) {
         var dict: [String: JSON] = [:]
         for (k, v) in elements {
-            dict[k] = v
+            dict[k] = v.encodedToJSON()
         }
 
         self = .object(dict)
@@ -215,7 +259,8 @@ extension JSON {
 public protocol _JSONType {}
 extension JSON: _JSONType {}
 
-// TODO: Support set through these subscripts
+// TODO: Better support for set through these subscripts
+// TODO: Check if it is viable to use JSONEncodable as the contraint and be rid of _JSONType
 extension Optional where Wrapped: _JSONType {
     /// returns the `JSON` value for key iff `Wrapped` is `JSON.object` and there is a value for the key
     public subscript(key: String) -> JSON? {

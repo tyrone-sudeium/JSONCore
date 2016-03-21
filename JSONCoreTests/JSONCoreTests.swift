@@ -168,7 +168,7 @@ class JSONCoreTests: XCTestCase {
     
     func testSerializeArray() {
         let arr: JSON = [
-            1, 2.1, true, false, "x", nil
+            1, 2.1, true, false, "x", JSON.null
         ]
         let nestedArr: JSON = [arr]
         expectString("[1,2.1,true,false,\"x\",null]", json: arr)
@@ -182,7 +182,7 @@ class JSONCoreTests: XCTestCase {
             "true": true,
             "false": false,
             "str": "x",
-            "null": nil
+            "null": JSON.null
         ]
         let str = try! obj.serialized()
         let returnedObj = try! JSONParser.parse(str.unicodeScalars)
@@ -191,8 +191,8 @@ class JSONCoreTests: XCTestCase {
     
     func testPrettyPrintNestedArray() {
         let arr: JSON = [
-            [1, 2, 3],
-            [4, 5, 6]
+            [1, 2, 3] as JSON,
+            [4, 5, 6] as JSON
         ]
         let expected = "[\n  [\n    1,\n    2,\n    3\n  ],\n  [\n    4,\n    5,\n    6\n  ]\n]"
         let str = try! arr.serialized(prettyPrint: true)
@@ -203,7 +203,7 @@ class JSONCoreTests: XCTestCase {
         let obj: JSON = [
             "test": [
                 "1": 2
-            ]
+            ] as JSON
         ]
         let expected = "{\n  \"test\": {\n    \"1\": 2\n  }\n}"
         let str = try! obj.serialized(prettyPrint: true)
@@ -221,13 +221,13 @@ class JSONCoreTests: XCTestCase {
                     "usb2",
                     "thunderbolt1",
                     "thunderbolt2"
-                ],
+                ] as JSON,
                 "memory": [
                     "capacity": 8,
                     "clock": 1.6,
                     "type": "DDR3"
-                ]
-            ]
+                ] as JSON
+            ] as JSON
         ]
         
         let jsonString = try! json.serialized()
@@ -246,7 +246,7 @@ class JSONCoreTests: XCTestCase {
     }
     
     func testSubscriptSetter() {
-        var json: JSON = ["height": 1.90, "array": [1, 2, 3]]
+        var json: JSON = ["height": 1.90, "array": [1, 2, 3] as JSON]
         XCTAssertEqual(json["height"].double, 1.90)
         json["height"] = 1.91
         XCTAssertEqual(json["height"].double, 1.91)
@@ -254,5 +254,30 @@ class JSONCoreTests: XCTestCase {
         XCTAssertEqual(json["array"][0], 1)
         json["array"][0] = 4
         XCTAssertEqual(json["array"][0], 4)
+    }
+    
+    func testArrayLiteralConversion() {
+        enum Color: String, JSONEncodable {
+            case Red, Green, Blue
+            
+            func encodedToJSON() -> JSON {
+                return JSON.string(rawValue)
+            }
+        }
+        
+        struct Person: JSONEncodable {
+            var name: String
+            var favoriteColor: Color
+            
+            func encodedToJSON() -> JSON {
+                return ["name": name, "favoriteColor": favoriteColor]
+            }
+        }
+        
+        let bob = Person(name: "Bob Doe", favoriteColor: .Green)
+        
+        let json: JSON = ["name": bob.name, "favoriteColor": bob.favoriteColor]
+        
+        XCTAssertEqual(json, bob.encodedToJSON())
     }
 }
