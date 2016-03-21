@@ -76,7 +76,7 @@ class JSONCoreTests: XCTestCase {
     
     func expectString(string: String, json: JSON, file: String = __FILE__, line: UInt = __LINE__) {
         do {
-            let serialized = try json.jsonString()
+            let serialized = try json.serialized()
             XCTAssertEqual(string, serialized, file: file, line: line)
         } catch let err {
             if let printableError = err as? CustomStringConvertible {
@@ -184,7 +184,7 @@ class JSONCoreTests: XCTestCase {
             "str": "x",
             "null": nil
         ]
-        let str = try! obj.jsonString()
+        let str = try! obj.serialized()
         let returnedObj = try! JSONParser.parse(str.unicodeScalars)
         XCTAssertEqual(returnedObj, obj)
     }
@@ -195,7 +195,7 @@ class JSONCoreTests: XCTestCase {
             [4, 5, 6]
         ]
         let expected = "[\n  [\n    1,\n    2,\n    3\n  ],\n  [\n    4,\n    5,\n    6\n  ]\n]"
-        let str = try! arr.jsonString(prettyPrint: true)
+        let str = try! arr.serialized(prettyPrint: true)
         XCTAssertEqual(str, expected)
     }
     
@@ -206,7 +206,7 @@ class JSONCoreTests: XCTestCase {
             ]
         ]
         let expected = "{\n  \"test\": {\n    \"1\": 2\n  }\n}"
-        let str = try! obj.jsonString(prettyPrint: true)
+        let str = try! obj.serialized(prettyPrint: true)
         XCTAssertEqual(str, expected)
     }
     
@@ -230,7 +230,7 @@ class JSONCoreTests: XCTestCase {
             ]
         ]
         
-        let jsonString = try! json.jsonString()
+        let jsonString = try! json.serialized()
         
         let json2 = try! JSONParser.parse(jsonString)
         
