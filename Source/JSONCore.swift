@@ -27,7 +27,7 @@ public enum JSONSerializeError: ErrorType {
 public typealias JSONInteger = Int
 
 /// Any value that can be expressed in JSON has a representation in `JSON`.
-public indirect enum JSON {
+public enum JSON {
     case object([String: JSON])
     case array([JSON])
 
@@ -40,131 +40,12 @@ public indirect enum JSON {
     /**
         Turns a nested graph of `JSON`s into a Swift `String`. This produces JSON data that
         strictly conforms to [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-        TODO: It can optionally pretty-print the output for debugging, but this comes with a non-negligible performance cost.
+        It can optionally pretty-print the output for debugging, but this comes with a non-negligible performance cost.
     */
-    public func jsonString(prettyPrint prettyPrint: Bool = false) throws -> String {
-        return try jsonString(prettyPrint: prettyPrint, indentLevel: 0)
+    public func serialized(prettyPrint prettyPrint: Bool = false, lineEndings: JSONSerializer.LineEndings = .Unix) throws -> String {
+        return try JSONSerializer(value: self, prettyPrint: prettyPrint, lineEndings: lineEndings).serialize()
     }
     
-    internal func jsonString(prettyPrint prettyPrint: Bool, indentLevel: Int) throws -> String {
-        func spacesForIndent(indentLevel: Int) -> String {
-            var str = ""
-            for _ in 0..<indentLevel {
-                str.appendContentsOf("  ")
-            }
-            return str
-        }
-        
-        switch self {
-        case .array(let a):
-            var str = "["
-            if prettyPrint {
-                str.appendContentsOf("\n")
-            }
-            for (i, v) in a.enumerate() {
-                if prettyPrint {
-                    str.appendContentsOf(spacesForIndent(indentLevel + 1))
-                }
-                str.appendContentsOf(try v.jsonString(prettyPrint: prettyPrint, indentLevel: indentLevel + 1))
-                guard i != a.endIndex.predecessor() else {
-                    if prettyPrint {
-                        str.appendContentsOf("\n")
-                    }
-                    break
-                }
-                str.appendContentsOf(",")
-                if prettyPrint {
-                    str.appendContentsOf("\n")
-                }
-            }
-            if prettyPrint {
-                str.appendContentsOf(spacesForIndent(indentLevel))
-            }
-            str.append(rightSquareBracket)
-            return str
-
-        case .object(let o):
-            var str = "{"
-            if prettyPrint {
-                str.appendContentsOf("\n")
-            }
-            for (i, pair) in o.enumerate() {
-                if prettyPrint {
-                    str.appendContentsOf(spacesForIndent(indentLevel + 1))
-                }
-                let (key, value) = pair
-                let keyJSONString = try JSON.string(key).jsonString()
-                let valueJSONString = try value.jsonString(prettyPrint: prettyPrint, indentLevel: indentLevel + 1)
-                if prettyPrint {
-                    str.appendContentsOf(keyJSONString + ": " + valueJSONString)
-                } else {
-                    str.appendContentsOf(keyJSONString + ":" + valueJSONString)
-                }
-                guard i.successor() != o.count else {
-                    if prettyPrint {
-                        str.appendContentsOf("\n")
-                    }
-                    break
-                }
-                str.appendContentsOf(",")
-                if prettyPrint {
-                    str.appendContentsOf("\n")
-                }
-            }
-            if prettyPrint {
-                str.appendContentsOf(spacesForIndent(indentLevel))
-            }
-            str.append(rightCurlyBracket)
-            return str
-
-        case .string(let s):
-            var output = ""
-            output.append(quotationMark)
-            var generator = s.unicodeScalars.generate()
-            while let scalar = generator.next() {
-                switch scalar.value {
-                case solidus.value:
-                    fallthrough
-                case 0x0000...0x001F:
-                    output.append(reverseSolidus)
-                    switch scalar {
-                    case tabCharacter:
-                        output.appendContentsOf("t")
-                    case carriageReturn:
-                        output.appendContentsOf("r")
-                    case lineFeed:
-                        output.appendContentsOf("n")
-                    case quotationMark:
-                        output.append(quotationMark)
-                    case backspace:
-                        output.appendContentsOf("b")
-                    case solidus:
-                        output.append(solidus)
-                    default:
-                        output.appendContentsOf("u")
-                        output.append(hexScalars[(Int(scalar.value) & 0xF000) >> 12])
-                        output.append(hexScalars[(Int(scalar.value) & 0x0F00) >> 8])
-                        output.append(hexScalars[(Int(scalar.value) & 0x00F0) >> 4])
-                        output.append(hexScalars[(Int(scalar.value) & 0x000F) >> 0])
-                    }
-                default:
-                    output.append(scalar)
-                }
-            }
-            output.append(quotationMark)
-            return output
-
-        case .null: return "null"
-        case .bool(let b): return b.description
-        case .integer(let i): return i.description
-        case .double(let f):
-            guard f.isFinite else {
-                throw JSONSerializeError.InvalidNumber
-            }
-            return f.description
-        }
-    }
-
     /// Returns this enum's associated Array value if it is one, `nil` otherwise.
     public var array: [JSON]? {
         guard case .array(let a) = self else { return nil }
@@ -934,6 +815,211 @@ extension JSONParser {
     }
 }
 
+// MARK: - JSONSerializer
+
+/**
+    Turns a nested graph of `JSON`s into a Swift `String`. This produces JSON data that
+    strictly conforms to [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+    It can optionally pretty-print the output for debugging, but this comes with a non-negligible performance cost.
+*/
+public class JSONSerializer {
+    
+    /// What line endings should the pretty printer use
+    public enum LineEndings: String {
+        /// Unix (i.e Linux, Darwin) line endings: line feed
+        case Unix = "\n"
+        /// Windows line endings: carriage return + line feed
+        case Windows = "\r\n"
+    }
+    /// Whether this serializer will pretty print output or not.
+    public let prettyPrint: Bool
+    
+    /// What line endings should the pretty printer use
+    public let lineEndings: LineEndings
+    
+    /**
+     Designated initializer for `JSONSerializer`, which requires an input `JSONValue`.
+     - Parameter value: The `JSONValue` to convert to a `String`.
+     - Parameter prettyPrint: Whether to print superfluous newlines and spaces to
+     make the output easier to read. Has a non-negligible performance cost. Defaults
+     to `false`.
+     */
+    public init(value: JSON, prettyPrint: Bool = false, lineEndings: LineEndings = .Unix) {
+        self.prettyPrint = prettyPrint
+        self.rootValue = value
+        self.lineEndings = lineEndings
+    }
+    
+    /**
+     Shortcut for creating a `JSONSerializer` and having it serialize the given
+     value.
+     - Parameter value: The `JSONValue` to convert to a `String`.
+     - Parameter prettyPrint: Whether to print superfluous newlines and spaces to
+     make the output easier to read. Has a non-negligible performance cost. Defaults
+     to `false`.
+     - Returns: The serialized value as a `String`.
+     - Throws: A `JSONSerializeError` if something failed during serialization.
+     */
+    public class func serializeValue(value: JSON, prettyPrint: Bool = false) throws -> String {
+        let serializer = JSONSerializer(value: value, prettyPrint: prettyPrint)
+        return try serializer.serialize()
+    }
+    
+    /**
+     Serializes the value passed during initialization.
+     - Returns: The serialized value as a `String`.
+     - Throws: A `JSONSerializeError` if something failed during serialization.
+     */
+    public func serialize() throws -> String {
+        try serializeValue(rootValue)
+        return output
+    }
+    
+    // MARK: Internals: Properties
+    let rootValue: JSON
+    var output: String = ""
+}
+
+// MARK: JSONSerializer Internals
+extension JSONSerializer {
+    
+    func serializeValue(value: JSON, indentLevel: Int = 0) throws {
+        switch value {
+		case .double(let d):
+			try serializeDouble(d)
+		case .integer(let i):
+			serializeInt(i)
+        case .null:
+            serializeNull()
+        case .string(let s):
+            serializeString(s)
+        case .object(let obj):
+            try serializeObject(obj, indentLevel: indentLevel)
+        case .bool(let b):
+            serializeBool(b)
+        case .array(let a):
+            try serializeArray(a, indentLevel: indentLevel)
+        }
+    }
+    
+    func serializeObject(obj: [String : JSON], indentLevel: Int = 0) throws {
+        output.append(leftCurlyBracket)
+        serializeNewline()
+        var i = 0
+        for (key, value) in obj {
+            serializeSpaces(indentLevel + 1)
+            serializeString(key)
+            output.append(colon)
+            if prettyPrint {
+                output.appendContentsOf(" ")
+            }
+            try serializeValue(value, indentLevel: indentLevel + 1)
+            i += 1
+            if i != obj.count {
+                output.append(comma)
+                
+            }
+            serializeNewline()
+        }
+        serializeSpaces(indentLevel)
+        output.append(rightCurlyBracket)
+    }
+    
+    func serializeArray(arr: [JSON], indentLevel: Int = 0) throws {
+        output.append(leftSquareBracket)
+        serializeNewline()
+        var i = 0
+        for val in arr {
+            serializeSpaces(indentLevel + 1)
+            try serializeValue(val, indentLevel: indentLevel + 1)
+            i += 1
+            if i != arr.count {
+                output.append(comma)
+            }
+            serializeNewline()
+        }
+        serializeSpaces(indentLevel)
+        output.append(rightSquareBracket)
+    }
+    
+    func serializeString(str: String) {
+        output.append(quotationMark)
+        var generator = str.unicodeScalars.generate()
+        while let scalar = generator.next() {
+            switch scalar.value {
+            case solidus.value:
+                fallthrough
+            case 0x0000...0x001F:
+                output.append(reverseSolidus)
+                switch scalar {
+                case tabCharacter:
+                    output.appendContentsOf("t")
+                case carriageReturn:
+                    output.appendContentsOf("r")
+                case lineFeed:
+                    output.appendContentsOf("n")
+                case quotationMark:
+                    output.append(quotationMark)
+                case backspace:
+                    output.appendContentsOf("b")
+                case solidus:
+                    output.append(solidus)
+                default:
+                    output.appendContentsOf("u")
+                    output.append(hexScalars[(Int(scalar.value) & 0xF000) >> 12])
+                    output.append(hexScalars[(Int(scalar.value) & 0x0F00) >> 8])
+                    output.append(hexScalars[(Int(scalar.value) & 0x00F0) >> 4])
+                    output.append(hexScalars[(Int(scalar.value) & 0x000F) >> 0])
+                }
+            default:
+                output.append(scalar)
+            }
+        }
+        output.append(quotationMark)
+    }
+    
+    func serializeDouble(f: Double) throws {
+			guard f.isFinite else { throw JSONSerializeError.InvalidNumber }
+          // TODO: Is CustomStringConvertible for number types affected by locale?
+          // TODO: Is CustomStringConvertible for Double fast?
+          output.appendContentsOf(f.description)
+    }
+	
+    func serializeInt(i: JSONInteger) {
+        // TODO: Is CustomStringConvertible for number types affected by locale?
+        output.appendContentsOf(i.description)
+    }
+	
+    func serializeBool(bool: Bool) {
+        switch bool {
+        case true:
+            output.appendContentsOf("true")
+        case false:
+            output.appendContentsOf("false")
+        }
+    }
+	
+    func serializeNull() {
+        output.appendContentsOf("null")
+    }
+    
+    @inline(__always)
+    private final func serializeNewline() {
+        if prettyPrint {
+            output.appendContentsOf(lineEndings.rawValue)
+        }
+    }
+    
+    @inline(__always)
+    private final func serializeSpaces(indentLevel: Int = 0) {
+        if prettyPrint {
+            for _ in 0..<indentLevel {
+                output.appendContentsOf("  ")
+            }
+        }
+    }
+}
+
 // MARK:- Unicode Scalars
 
 private let leftSquareBracket = UnicodeScalar(0x005b)
@@ -988,4 +1074,3 @@ private let hexScalars = [
     "e".unicodeScalars.first!,
     "f".unicodeScalars.first!
 ]
-

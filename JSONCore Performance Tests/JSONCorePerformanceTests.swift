@@ -10,26 +10,23 @@ import XCTest
 import JSONCore
 
 class JSONCorePerformanceTests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
-    func testParsePerformanceWithTwoHundredMegabyteFile() {
-        let bundle = NSBundle(forClass: self.dynamicType)
+    let jsonString: String = {
+        let bundle = NSBundle(forClass: JSONCorePerformanceTests.self)
         let path = bundle.pathForResource("1", ofType: "json")
         let data = NSData(contentsOfFile: path!)!
-        let json = String.fromCString(unsafeBitCast(data.bytes, UnsafePointer<CChar>.self))!
+        let jsonString = String.fromCString(unsafeBitCast(data.bytes, UnsafePointer<CChar>.self))!
+        
+        return jsonString
+    }()
+    
+    var json: JSON?
+    
+    func testParsePerformanceWithTwoHundredMegabyteFile() {
         measureBlock {
             do {
-                let value = try JSONParser.parse(json.unicodeScalars)
-                let coordinates = value.object!["coordinates"]!.array!
+                self.json = try JSONParser.parse(self.jsonString.unicodeScalars)
+                let coordinates = self.json!.object!["coordinates"]!.array!
                 let len = coordinates.count
                 var x = 0.0; var y = 0.0; var z = 0.0
                 
@@ -49,14 +46,23 @@ class JSONCorePerformanceTests: XCTestCase {
         }
     }
     
-    func testSerializationPerformanceWithTwoHundredMegabyteFile() {
-        let bundle = NSBundle(forClass: self.dynamicType)
-        let path = bundle.pathForResource("1", ofType: "json")
-        let data = NSData(contentsOfFile: path!)!
-        let json = String.fromCString(unsafeBitCast(data.bytes, UnsafePointer<CChar>.self))!
-        let value = try! JSONParser.parse(json.unicodeScalars)
+    func testSerializerSpeed() {
+        if json == nil {
+            json = try! JSONParser.parse(self.jsonString)
+        }
+        
         measureBlock {
-            try! value.jsonString()
+            try! self.json!.serialized()
+        }
+    }
+    
+    func testSerializerSpeedPrettyPrinting() {
+        if json == nil {
+            json = try! JSONParser.parse(self.jsonString)
+        }
+        
+        measureBlock {
+            try! self.json!.serialized(prettyPrint: true)
         }
     }
 }
