@@ -366,6 +366,31 @@ public enum JSONParseError: ErrorType {
     case EndOfFile
 }
 
+extension JSONParseError: CustomStringConvertible {
+    /// Returns a `String` version of the error which can be logged.
+    /// Not currently localized.
+    public var description: String {
+        switch self {
+        case .Unknown:
+            return "Unknown error"
+        case .EmptyInput:
+            return "Empty input"
+        case .UnexpectedCharacter(let lineNumber, let charNum):
+            return "Unexpected character at \(lineNumber):\(charNum)"
+        case .UnterminatedString:
+            return "Unterminated string"
+        case .InvalidUnicode:
+            return "Invalid unicode"
+        case .UnexpectedKeyword(let lineNumber, let characterNumber):
+            return "Unexpected keyword at \(lineNumber):\(characterNumber)"
+        case .EndOfFile:
+            return "Unexpected end of file"
+        case .InvalidNumber:
+            return "Invalid number"
+        }
+    }
+}
+
 // MARK:- Parser
 
 // The structure of this parser is inspired by the great (and slightly insane) NextiveJson parser:
