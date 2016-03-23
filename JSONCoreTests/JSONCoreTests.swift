@@ -134,7 +134,7 @@ class JSONCoreTests: XCTestCase {
     }
     
     func testParseArray() {
-        expectValue(.array([]), json: "[\n ]")
+        expectValue(.array([]), json: "[\n  \n]")
     }
     
     func testSerializeBool() {

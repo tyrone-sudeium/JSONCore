@@ -588,17 +588,13 @@ extension JSONParser {
         }
         var arrBuilder = [JSON]()
         try nextScalar()
-        if scalar == rightSquareBracket {
-            // Empty array
-            return JSON.array(arrBuilder)
-        }
         outerLoop: repeat {
             
             switch scalar {
             case rightSquareBracket: return JSON.array(arrBuilder)
             case "\n", "\r", "\t", " ":
                 try nextScalar()
-                break
+                continue
             default: ()
             }
             
