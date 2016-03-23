@@ -593,6 +593,15 @@ extension JSONParser {
             return JSON.array(arrBuilder)
         }
         outerLoop: repeat {
+            
+            switch scalar {
+            case rightSquareBracket: return JSON.array(arrBuilder)
+            case "\n", "\r", "\t", " ":
+                try nextScalar()
+                break
+            default: ()
+            }
+            
             let value = try nextValue()
             arrBuilder.append(value)
             switch value {

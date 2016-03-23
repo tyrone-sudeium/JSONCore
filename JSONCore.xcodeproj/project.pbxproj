@@ -117,7 +117,10 @@
 				8BAD3FC91C241E1200D362C5 /* JSONCore Performance Tests */,
 				8B4714B01BDA647800D29CDC /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
 		};
 		8B4714B01BDA647800D29CDC /* Products */ = {
 			isa = PBXGroup;
@@ -866,6 +869,7 @@
 				8BAD3FD21C241E1200D362C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8BEEBF391BDB0FB400F702C8 /* Build configuration list for PBXNativeTarget "JSONCore watchOS" */ = {
 			isa = XCConfigurationList;
