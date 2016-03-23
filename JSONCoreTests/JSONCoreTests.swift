@@ -48,7 +48,7 @@ class JSONCoreTests: XCTestCase {
         super.tearDown()
     }
     
-    func expectError(error: JSONParseError, json: String, file: String = __FILE__, line: UInt = __LINE__) {
+    func expectError(error: JSONParseError, json: String, file: StaticString = #file, line: UInt = #line) {
         do {
             try JSONParser.parse(json.unicodeScalars)
             XCTFail("Expected error, got success", file: file, line: line)
@@ -57,7 +57,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectErrorString(error: String, json: String, file: String = __FILE__, line: UInt = __LINE__) {
+    func expectErrorString(error: String, json: String, file: StaticString = #file, line: UInt = #line) {
         do {
             try JSONParser.parse(json.unicodeScalars)
             XCTFail("Expected error, got success", file: file, line: line)
@@ -69,7 +69,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectValue(value: JSON, json: String, file: String = __FILE__, line: UInt = __LINE__) {
+    func expectValue(value: JSON, json: String, file: StaticString = #file, line: UInt = #line) {
         do {
             let parsedValue = try JSONParser.parse(json.unicodeScalars)
             XCTAssertEqual(value, parsedValue, file: file, line: line)
@@ -80,7 +80,7 @@ class JSONCoreTests: XCTestCase {
         }
     }
     
-    func expectString(string: String, json: JSON, file: String = __FILE__, line: UInt = __LINE__) {
+    func expectString(string: String, json: JSON, file: StaticString = #file, line: UInt = #line) {
         do {
             let serialized = try json.serialized()
             XCTAssertEqual(string, serialized, file: file, line: line)
@@ -131,6 +131,10 @@ class JSONCoreTests: XCTestCase {
     func testParseUnicode() {
         expectValue(.string("и"), json: "\"\\u0438\"")
         expectValue(.string("𝄞"), json: "\"\\ud834\\udd1e\"")
+    }
+    
+    func testParseArray() {
+        expectValue(.array([]), json: "[\n  \n]")
     }
     
     func testSerializeBool() {
