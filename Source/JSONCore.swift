@@ -613,6 +613,10 @@ extension JSONParser {
         }
         var arrBuilder = [JSON]()
         try nextScalar()
+        let v = scalar.value
+        if v == 0x0009 || v == 0x000A || v == 0x000D || v == 0x0020 {
+            try skipToNextToken()
+        }
         if scalar == rightSquareBracket {
             // Empty array
             return JSON.array(arrBuilder)

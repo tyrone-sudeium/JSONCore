@@ -133,6 +133,11 @@ class JSONCoreTests: XCTestCase {
         expectValue(.string("𝄞"), json: "\"\\ud834\\udd1e\"")
     }
     
+    func testParseArray() {
+        expectValue(.array([]), json: "[\n  \n]")
+        expectValue(.array([]), json: "[\n]")
+    }
+    
     func testSerializeBool() {
         expectString("true", json: JSON.bool(true))
         expectString("false", json: JSON.bool(false))
