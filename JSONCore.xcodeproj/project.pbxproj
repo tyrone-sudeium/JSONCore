@@ -446,7 +446,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"${PROJECT_DIR}/JSONCore Performance Tests\"\nif [ ! -e \"1.json\" ]; then\n    /usr/bin/env ruby generate_json.rb\nfi\n";
+			shellScript = "cd \"${PROJECT_DIR}/JSONCore Performance Tests\"\nif [ ! -e \"1.json\" ]; then\n    ./GenerateJSON.swift\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

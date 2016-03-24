@@ -41,6 +41,7 @@ for _ in 0..<numElements {
         ]
     ] as NSDictionary)
 }
+let obj = ["coordinates": arr, "info": "some info"]
 
-let data = try! NSJSONSerialization.dataWithJSONObject(arr as NSArray, options: [.PrettyPrinted])
+let data = try! NSJSONSerialization.dataWithJSONObject(obj as NSDictionary, options: [.PrettyPrinted])
 data.writeToFile("1.json", atomically: true)
