@@ -41,9 +41,9 @@
 		8B4714C01BDA647800D29CDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BAD3FC81C241E1200D362C5 /* JSONCore Performance Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "JSONCore Performance Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BAD3FCC1C241E1200D362C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8BAD3FD31C241E4500D362C5 /* generate_json.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = generate_json.rb; sourceTree = "<group>"; };
 		8BAD3FD41C241E4500D362C5 /* JSONCorePerformanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCorePerformanceTests.swift; sourceTree = "<group>"; };
 		8BAD3FD81C241EF200D362C5 /* 1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 1.json; sourceTree = "<group>"; };
+		8BC6365F1CA28DBE00A90894 /* GenerateJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateJSON.swift; sourceTree = "<group>"; };
 		8BEEBF341BDB0FB400F702C8 /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BEEBF381BDB0FB400F702C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BEEBF411BDB0FE900F702C8 /* JSONCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -155,8 +155,8 @@
 			children = (
 				8BAD3FD81C241EF200D362C5 /* 1.json */,
 				8BAD3FCC1C241E1200D362C5 /* Info.plist */,
-				8BAD3FD31C241E4500D362C5 /* generate_json.rb */,
 				8BAD3FD41C241E4500D362C5 /* JSONCorePerformanceTests.swift */,
+				8BC6365F1CA28DBE00A90894 /* GenerateJSON.swift */,
 			);
 			path = "JSONCore Performance Tests";
 			sourceTree = "<group>";
@@ -866,6 +866,7 @@
 				8BAD3FD21C241E1200D362C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8BEEBF391BDB0FB400F702C8 /* Build configuration list for PBXNativeTarget "JSONCore watchOS" */ = {
 			isa = XCConfigurationList;
