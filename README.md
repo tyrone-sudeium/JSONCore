@@ -50,7 +50,7 @@ over `NSString`.
 ```Swift
 let json = "{\"test\": 1}"
 do {
-    let value = try JSONParser.parseString(json)
+    let value = try JSONParser.parse(json)
     // value is a JSONValue enum, which for our JSON should be
     // an Object/Dictionary
     guard let test = value["test"]?.int else { return }
