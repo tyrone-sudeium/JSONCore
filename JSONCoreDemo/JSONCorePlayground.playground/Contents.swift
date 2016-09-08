@@ -11,13 +11,12 @@ Some notes on getting this to work:
 
 import JSONCore
 
-func extractTestInt(json: String) -> Int64? {
+func extractTestInt(json: String) -> Int? {
     do {
-        let value = try JSONParser.parseData(json.unicodeScalars)
+        let value = try JSONParser.parse(scalars: json.unicodeScalars)
         // value is a JSONValue enum, which for our JSON should be
         // an Object/Dictionary
-        guard let test = value.object?["test"]?.int else { return nil }
-        return test
+        return value["test"].int
     } catch let err {
         if let printableError = err as? CustomStringConvertible {
             print("JSON parse error: \(printableError)")
@@ -27,5 +26,5 @@ func extractTestInt(json: String) -> Int64? {
 }
 
 let json = "{\"test\": 1}"
-let test = extractTestInt(json)
+let test = extractTestInt(json: json)
 print("test is \(test)")

@@ -13,35 +13,36 @@ struct Person: JSONConvertible {
     let firstName: String
     let surname: String
     let nicknames: [String]
-    let age: Int64
+    let age: Int
     
-    init(jsonValue: JSONValue) throws {
-        guard let firstName = jsonValue.object?["firstName"]?.string else { throw JSONConvertError.MissingField(field: "firstName") }
-        guard let surname = jsonValue.object?["surname"]?.string else { throw JSONConvertError.MissingField(field: "surname") }
-        guard let nicknames = jsonValue.object?["nicknames"]?.array else { throw JSONConvertError.MissingField(field: "nicknames") }
-        guard let age = jsonValue.object?["age"]?.int else { throw JSONConvertError.MissingField(field: "age") }
+    init(jsonValue: JSON) throws {
+        guard let firstName = jsonValue["firstName"].string else { throw JSONConvertError.missingField(field: "firstName") }
+        guard let surname = jsonValue["surname"].string else { throw JSONConvertError.missingField(field: "surname") }
+        guard let nicknames = jsonValue["nicknames"].array else { throw JSONConvertError.missingField(field: "nicknames") }
+        guard let age = jsonValue["age"].int else { throw JSONConvertError.missingField(field: "age") }
         self.firstName = firstName
         self.surname = surname
         self.age = age
         self.nicknames = try nicknames.map { value -> String in
-            guard let s = value.string else { throw JSONConvertError.InvalidField(field: "nicknames")}
+            guard let s = value.string else { throw JSONConvertError.invalidField(field: "nicknames")}
             return s
         }
     }
     
-    init(firstName: String, surname: String, nicknames: [String], age: Int64) {
+    init(firstName: String, surname: String, nicknames: [String], age: Int) {
         self.firstName = firstName
         self.surname = surname
         self.nicknames = nicknames
         self.age = age
     }
     
-    func jsonValue() throws -> JSONValue {
-        var value = JSONObject()
-        value["firstName"] = JSONValue.JSONString(firstName)
-        value["surname"] = JSONValue.JSONString(surname)
-        value["age"] = JSONValue.JSONNumber(JSONNumberType.JSONIntegral(age))
-        value["nicknames"] = JSONValue.JSONArray(self.nicknames.map { JSONValue.JSONString($0) })
-        return JSONValue.JSONObject(value)
+    func jsonValue() throws -> JSON {
+        let value: JSON = [
+            "firstName": firstName,
+            "surname": surname,
+            "age": age,
+            "nicknames": JSON.array(nicknames.map{JSON.string($0)})
+        ]
+        return value
     }
 }

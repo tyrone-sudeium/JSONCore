@@ -13,7 +13,7 @@ class JSONEditorViewController: UIViewController, UITextViewDelegate {
     var string: String?
     @IBOutlet var textView: UITextView!
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         registerForKeyboardNotifications()
         
@@ -22,20 +22,20 @@ class JSONEditorViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         string = textView.text
     }
 
     func registerForKeyboardNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWasShown:", name: UIKeyboardDidShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWasShown), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     func keyboardWasShown(notification: NSNotification) {
         guard let info = notification.userInfo else { return }
-        guard let kbSize = info[UIKeyboardFrameBeginUserInfoKey]?.CGRectValue?.size else { return }
+        guard let kbSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.size else { return }
         
         let contentInsets = UIEdgeInsets(top: 64.0, left: 0.0, bottom: kbSize.height, right: 0.0)
         textView.contentInset = contentInsets

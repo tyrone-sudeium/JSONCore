@@ -19,11 +19,11 @@ class DemoTableViewController: UITableViewController {
             Person(firstName: "Jane", surname: "Citizen", nicknames: [], age: 31),
             Person(firstName: "Groot", surname: "Groot", nicknames: ["Groot"], age: 0),
         ]
-        let peopleValue = JSONValue.JSONArray(people.map { try! $0.jsonValue() })
-        jsonString = try! JSONSerializer.serializeValue(peopleValue, prettyPrint: true)
+        let peopleValue = JSON.array(people.map { try! $0.jsonValue() })
+        jsonString = try! JSONSerializer.serialize(value: peopleValue, prettyPrint: true)
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let editor = currentEditor {
             jsonString = editor.string
@@ -31,15 +31,15 @@ class DemoTableViewController: UITableViewController {
     }
     
     // MARK: - Navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
-        case .Some("EditorSegue"):
-            currentEditor = segue.destinationViewController as? JSONEditorViewController
+        case .some("EditorSegue"):
+            currentEditor = segue.destination as? JSONEditorViewController
             if let editor = currentEditor {
                 editor.string = jsonString
             }
-        case .Some("ParseSegue"):
-            guard let peopleVC = segue.destinationViewController as? PeopleTableViewController else { return }
+        case .some("ParseSegue"):
+            guard let peopleVC = segue.destination as? PeopleTableViewController else { return }
             peopleVC.jsonString = jsonString
         default:
             break
