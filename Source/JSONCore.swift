@@ -233,12 +233,12 @@ extension JSON {
     */
     public subscript(index: Int) -> JSON? {
         get {
-            guard case .array(let a) = self , a.indices ~= index else { return nil }
+            guard case .array(let a) = self, a.indices ~= index else { return nil }
             return a[index]
         }
 
         set {
-            guard case .array(var a) = self , a.indices ~= index else { return }
+            guard case .array(var a) = self, a.indices ~= index else { return }
             switch newValue {
             case .some(let newValue):
                 a[index] = newValue
@@ -285,7 +285,7 @@ extension Optional where Wrapped: _JSONType {
     /// returns the JSON value at index iff `Wrapped == JSON.array(_)` and the index is within the arrays bounds
     public subscript(index: Int) -> JSON? {
         get {
-            guard let a = (self as? JSON)?.array , a.indices ~= index else { return nil }
+            guard let a = (self as? JSON)?.array, a.indices ~= index else { return nil }
             return a[index]
         }
 
