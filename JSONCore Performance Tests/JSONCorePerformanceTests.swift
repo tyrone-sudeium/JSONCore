@@ -13,7 +13,7 @@ class JSONCorePerformanceTests: XCTestCase {
     
     let jsonString: String = {
         let bundle = Bundle(for: JSONCorePerformanceTests.self)
-        let path = bundle.pathForResource("1", ofType: "json")
+        let path = bundle.path(forResource: "1", ofType: "json")
         let data = NSData(contentsOfFile: path!)!
         let jsonString = String(cString: unsafeBitCast(data.bytes, to: UnsafePointer<CChar>.self))
         

@@ -30,12 +30,6 @@ public func == (lhs: JSONParseError, rhs: JSONParseError) -> Bool {
     }
 }
 
-extension JSON {
-    public func serialized(prettyPrint: Bool = false, lineEndings: JSONSerializer.LineEndings = .Unix) throws -> String {
-        return try JSONSerializer(value: self, prettyPrint: prettyPrint, lineEndings: lineEndings).serialize()
-    }
-}
-
 class JSONCoreTests: XCTestCase {
     
     override func setUp() {
@@ -164,9 +158,9 @@ class JSONCoreTests: XCTestCase {
     
     func testSerializeStringEscapes() {
         expect(string: "\"\\r\\n\\t\\\\/\"", json: JSON.string("\r\n\t\\/"))
-        let backspace = UnicodeScalar(0x0008)
+        let backspace = UnicodeScalar(0x0008)!
         var backspaceStr = ""
-        backspaceStr.append(backspace)
+        backspaceStr.unicodeScalars.append(backspace)
         expect(string: "\"\\b\"", json: JSON.string(backspaceStr))
     }
     
