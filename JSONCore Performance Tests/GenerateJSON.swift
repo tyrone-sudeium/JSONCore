@@ -25,8 +25,8 @@ func randomName() -> String {
         let char = chars[Int(arc4random_uniform(UInt32(chars.count)))]
         str.append(char)
     }
-    str.appendContentsOf(" ")
-    str.appendContentsOf(arc4random_uniform(10000).description)
+    str.append(" ")
+    str.append(arc4random_uniform(10000).description)
     return str
 }
 
@@ -43,5 +43,5 @@ for _ in 0..<numElements {
 }
 let obj = ["coordinates": arr, "info": "some info"]
 
-let data = try! NSJSONSerialization.dataWithJSONObject(obj as NSDictionary, options: [.PrettyPrinted])
-data.writeToFile("1.json", atomically: true)
+let data = try! JSONSerialization.data(withJSONObject: obj as NSDictionary, options: [.prettyPrinted])
+try! data.write(to: URL(fileURLWithPath: "1.json"), options: [.dataWritingAtomic])

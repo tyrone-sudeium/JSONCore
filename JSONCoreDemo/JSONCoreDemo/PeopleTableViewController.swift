@@ -10,74 +10,74 @@ import UIKit
 import JSONCore
 
 enum ParseResult {
-    case People([Person])
-    case ConvertError(JSONConvertError)
-    case ParseError(JSONParseError)
-    case NotParsed
+    case people([Person])
+    case convertError(JSONConvertError)
+    case parseError(JSONParseError)
+    case notParsed
 }
 
 class PeopleTableViewController: UITableViewController {
     
-    var result = ParseResult.NotParsed
+    var result = ParseResult.notParsed
     var jsonString: String?
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        result = ParseResult.NotParsed
+        result = ParseResult.notParsed
         tableView.reloadData()
         
         guard let json = jsonString else { return }
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             do {
-                let value = try JSONParser.parseData(json.unicodeScalars)
-                guard let peopleValues = value.array else { throw JSONConvertError.InvalidField(field: "root") }
+                let value = try JSONParser.parse(scalars: json.unicodeScalars)
+                guard let peopleValues = value.array else { throw JSONConvertError.invalidField(field: "root") }
                 let people = try peopleValues.map { try Person.init(jsonValue: $0) }
-                self.result = ParseResult.People(people)
+                self.result = ParseResult.people(people)
             } catch let error {
                 if let convertErr = error as? JSONConvertError {
-                    self.result = ParseResult.ConvertError(convertErr)
+                    self.result = ParseResult.convertError(convertErr)
                 } else if let parseErr = error as? JSONParseError {
-                    self.result = ParseResult.ParseError(parseErr)
+                    self.result = ParseResult.parseError(parseErr)
                 }
             }
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
         }
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         switch result {
-        case .People(let people):
+        case .people(let people):
             return people.count
-        case .NotParsed:
+        case .notParsed:
             return 0
         default:
             return 1
         }
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch result {
-        case .People:
+        case .people:
             return 4
-        case .NotParsed:
+        case .notParsed:
             return 0
         default:
             return 1
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let id = self.tableView(tableView, cellIdentifierForRowAtIndexPath: indexPath)
-        let cell = tableView.dequeueReusableCellWithIdentifier(id, forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: id, for: indexPath)
         switch result {
-        case .People(let people):
-            let person = people[indexPath.section]
+        case .people(let people):
+            let person = people[(indexPath as NSIndexPath).section]
             configurePersonCell(cell, forRowAtIndexPath: indexPath, person: person)
-        case .ConvertError(let error):
+        case .convertError(let error):
             configureConvertErrorCell(cell, forRowAtIndexPath: indexPath, error: error)
-        case .ParseError(let error):
+        case .parseError(let error):
             configureParseErrorCell(cell, forRowAtIndexPath: indexPath, error: error)
         default:
             break
@@ -85,21 +85,21 @@ class PeopleTableViewController: UITableViewController {
         return cell
     }
     
-    func tableView(tableView: UITableView, cellIdentifierForRowAtIndexPath: NSIndexPath) -> String {
+    func tableView(_ tableView: UITableView, cellIdentifierForRowAtIndexPath: IndexPath) -> String {
         switch result {
-        case .People:
+        case .people:
             return "PersonInfoCell"
         default:
             return "ErrorCell"
         }
     }
     
-    func configurePersonCell(cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath, person: Person) {
+    func configurePersonCell(_ cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath, person: Person) {
         let values = [
             person.firstName,
             person.surname,
             "\(person.age)",
-            (person.nicknames as NSArray).componentsJoinedByString(", ")
+            (person.nicknames as NSArray).componentsJoined(by: ", ")
         ]
         let titles = [
             "First Name",
@@ -108,22 +108,22 @@ class PeopleTableViewController: UITableViewController {
             "Nicknames"
         ]
         
-        if indexPath.row < titles.count {
-            cell.textLabel?.text = titles[indexPath.row]
-            cell.detailTextLabel?.text = values[indexPath.row]
+        if (indexPath as NSIndexPath).row < titles.count {
+            cell.textLabel?.text = titles[(indexPath as NSIndexPath).row]
+            cell.detailTextLabel?.text = values[(indexPath as NSIndexPath).row]
         }
     }
     
-    func configureConvertErrorCell(cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath, error: JSONConvertError) {
+    func configureConvertErrorCell(_ cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath, error: JSONConvertError) {
         switch error {
-        case .InvalidField(let field):
+        case .invalidField(let field):
             cell.textLabel?.text = "Invalid field: \(field)"
-        case .MissingField(let field):
+        case .missingField(let field):
             cell.textLabel?.text = "Missing field: \(field)"
         }
     }
     
-    func configureParseErrorCell(cell: UITableViewCell, forRowAtIndexPath: NSIndexPath, error: JSONParseError) {
+    func configureParseErrorCell(_ cell: UITableViewCell, forRowAtIndexPath: IndexPath, error: JSONParseError) {
         cell.textLabel?.text = error.description
     }
     

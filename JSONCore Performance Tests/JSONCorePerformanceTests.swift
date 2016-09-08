@@ -12,10 +12,10 @@ import JSONCore
 class JSONCorePerformanceTests: XCTestCase {
     
     let jsonString: String = {
-        let bundle = NSBundle(forClass: JSONCorePerformanceTests.self)
-        let path = bundle.pathForResource("1", ofType: "json")
+        let bundle = Bundle(for: JSONCorePerformanceTests.self)
+        let path = bundle.path(forResource: "1", ofType: "json")
         let data = NSData(contentsOfFile: path!)!
-        let jsonString = String.fromCString(unsafeBitCast(data.bytes, UnsafePointer<CChar>.self))!
+        let jsonString = String(cString: unsafeBitCast(data.bytes, to: UnsafePointer<CChar>.self))
         
         return jsonString
     }()
@@ -23,9 +23,9 @@ class JSONCorePerformanceTests: XCTestCase {
     var json: JSON?
     
     func testParsePerformanceWithTwoHundredMegabyteFile() {
-        measureBlock {
+        measure {
             do {
-                self.json = try JSONParser.parse(self.jsonString.unicodeScalars)
+                self.json = try JSONParser.parse(scalars: self.jsonString.unicodeScalars)
                 let coordinates = self.json!.object!["coordinates"]!.array!
                 let len = coordinates.count
                 var x = 0.0; var y = 0.0; var z = 0.0
@@ -48,21 +48,21 @@ class JSONCorePerformanceTests: XCTestCase {
     
     func testSerializerSpeed() {
         if json == nil {
-            json = try! JSONParser.parse(self.jsonString)
+            json = try! JSONParser.parse(string: self.jsonString)
         }
         
-        measureBlock {
-            try! JSONSerializer.serializeValue(self.json!)
+        measure {
+            let _ = try! JSONSerializer.serialize(value: self.json!)
         }
     }
     
     func testSerializerSpeedPrettyPrinting() {
         if json == nil {
-            json = try! JSONParser.parse(self.jsonString)
+            json = try! JSONParser.parse(string: self.jsonString)
         }
         
-        measureBlock {
-            try! JSONSerializer.serializeValue(self.json!, prettyPrint: true)
+        measure {
+            let _ = try! JSONSerializer.serialize(value: self.json!, prettyPrint: true)
         }
     }
 }

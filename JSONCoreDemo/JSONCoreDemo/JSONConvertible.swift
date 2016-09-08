@@ -10,11 +10,11 @@ import Foundation
 import JSONCore
 
 protocol JSONConvertible {
-    init(jsonValue: JSONValue) throws
-    func jsonValue() throws -> JSONValue
+    init(jsonValue: JSON) throws
+    func jsonValue() throws -> JSON
 }
 
-enum JSONConvertError: ErrorType {
-    case MissingField(field: String)
-    case InvalidField(field: String)
+enum JSONConvertError: Error {
+    case missingField(field: String)
+    case invalidField(field: String)
 }

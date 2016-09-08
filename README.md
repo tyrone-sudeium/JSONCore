@@ -7,6 +7,9 @@ means it has no dependencies on Foundation, UIKit, AppKit or even Darwin. This
 is a true parser and serializer, it doesn't use `NSJSONSerialization` at all,
 nor does it call out to any C JSON library.
 
+It requires at least Xcode 8 and Swift 3. If you need Swift 2.x support, use
+the 1.0.0 tag.
+
 ## Why?
 
 ### Performance
@@ -50,7 +53,7 @@ over `NSString`.
 ```Swift
 let json = "{\"test\": 1}"
 do {
-    let value = try JSONParser.parse(json)
+    let value = try JSONParser.parse(string: json)
     // value is a JSONValue enum, which for our JSON should be
     // an Object/Dictionary
     guard let test = value["test"]?.int else { return }
@@ -64,7 +67,7 @@ do {
 
 ## Installation
 
-###via Swift Package Manager (Swift 2.2 beta)
+###via Swift Package Manager (Swift 3)
 To use JSONCore as a Swift Package Manager package just add the following in
 your `Package.swift` file.
 
@@ -74,7 +77,7 @@ import PackageDescription
 let package = Package(
     name: "HelloWorld",
     dependencies: [
-        .Package(url: "https://github.com/tyrone-sudeium/JSONCore.git", majorVersion: 1))
+        .Package(url: "https://github.com/tyrone-sudeium/JSONCore.git", majorVersion: 2))
     ]
 )
 ```
