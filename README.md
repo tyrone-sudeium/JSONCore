@@ -100,3 +100,19 @@ JSON Core is just a single Swift file with zero dependencies, so feel free to
 make this repo a submodule and just drop the `JSONCore.swift` file into your
 project directly.
 
+## Other JSON Libraries
+If you hate something, or everything about JSON Core, the Swift community
+has you covered with plenty of alternatives.
+
+Just want the fastest parser around?
+* [vdka's JSON](https://github.com/vdka/JSON)
+
+Want something quick but also does interesting things like lazy sequences?
+* [PMJSON](https://github.com/postmates/PMJSON)
+* [Jay](https://github.com/DanToml/Jay)
+
+Just want something popular?
+* [Argo](https://github.com/thoughtbot/Argo) (note: uses `NSJSONSerialization`)
+* [Freddy](https://github.com/bignerdranch/Freddy)
+
+I won't take it personally.
