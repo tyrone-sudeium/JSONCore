@@ -471,7 +471,7 @@ open class JSONParser {
 
     var generator: String.UnicodeScalarView.Iterator
     let data: String.UnicodeScalarView
-    var scalar: UnicodeScalar!
+    var scalar: UnicodeScalar = UnicodeScalar(0)
     var lineNumber: UInt = 0
     var charNumber: UInt = 0
 
