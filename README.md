@@ -2,6 +2,21 @@
 
 [![Build Status](https://travis-ci.org/tyrone-sudeium/JSONCore.svg)](https://travis-ci.org/tyrone-sudeium/JSONCore)
 
+## Project Discontinued!
+
+Well everyone, it was fun while it lasted! As of Swift 4, the JSON situation
+is vastly improved, and there's very little practical reason to use JSONCore
+any more! Please adopt the official Swift `Codable` protocol and use the
+built-in encoder and decoder.
+
+See the Apple documentation of [Codable](https://developer.apple.com/documentation/swift/codable) 
+for more information.
+
+JSONCore will not be updated for Swift 4 and it will not receive any future
+development.
+
+## Introduction
+
 JSON Core is a JSON parser and serializer written using only core Swift. This
 means it has no dependencies on Foundation, UIKit, AppKit or even Darwin. This
 is a true parser and serializer, it doesn't use `NSJSONSerialization` at all,
